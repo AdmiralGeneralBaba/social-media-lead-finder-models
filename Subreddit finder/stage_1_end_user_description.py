@@ -26,8 +26,8 @@ ONLY output this and nothing else."""
 
 
 ###############   example usage down here  ######################
-product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
-test = stage_1_end_user_description(product_description)
-print(test)
+# product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+# test = stage_1_end_user_description(product_description)
+# print(test)
 
 
