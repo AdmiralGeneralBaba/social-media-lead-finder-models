@@ -30,8 +30,6 @@ subreddit_search_json = {
     "skipComments": False
 }
 
-test = apify_reddit_agent(subreddit_search_json)
-print(test)
 
 
 # Takes in the product description the user gave, and then returns a JSON/dictionary output with a users array of string values
@@ -87,34 +85,30 @@ def search_for_subreddits(keywords) :
 
 #Evaluator method for the pick local best stage : 
 def stage_3_evaluator_method(user_keyword_json) : 
+  print(user_keyword_json)
   def breakdown_json(json) :
     new_json = []
     for json in user_keyword_json : 
+        
         local_new_json = {
-          'title' : json['title'],
+          "title" : json["title"],
           'description' : json['description'],
-          'numberOfMembers' : json['description'],
+          'numberOfMembers' : json["numberOfMembers"],
           'url' : json['url']
         }
         new_json.append(local_new_json)
+    return new_json
+
   new_json = breakdown_json(user_keyword_json)
   return new_json
 
-stage_3_evaluator_method()
+
     
 # calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
 def stage_3_reddit_api_calls(json) : 
     for user in json['users'] : 
         local_result = search_for_subreddits(user['keywords'])
         print(local_result)
-
-
-
-
-
-
-
-
 
 
 
@@ -140,5 +134,44 @@ test_json = {
   ]
 }
 
-test = stage_3_evaluator_method(test_json)
+test_json_2 = [{
+    "id": "2z6wn",
+    "name": "t5_2z6wn",
+    "title": "Streetwear Startup",
+    "headerImage": "https://a.thumbs.redditmedia.com/gq9561mrzeY9TrVx.png",
+    "description": "The underground community no one wants to admit they're from.\n\nThis subreddit serves to be a platform for streetwear brand owners (startups and established) to discuss ideas, trade knowledge, share your brand, and connect with others.",
+    "over18": False,
+    "createdAt": "2013-11-22T21:49:18.000Z",
+    "scrapedAt": "2024-02-07T18:20:58.179Z",
+    "numberOfMembers": 775612,
+    "url": "https://www.reddit.com/r/streetwearstartup/",
+    "dataType": "community"
+}]
+
+test_json_3 = [{
+  "id": "2xquw",
+  "name": "t5_2xquw",
+  "title": "Startup Business Advice",
+  "description": "Startup business advice and ideas ",
+  "over18": False,
+  "createdAt": "2013-07-02T13:51:45.000Z",
+  "scrapedAt": "2024-02-07T17:45:32.873Z",
+  "numberOfMembers": 77,
+  "url": "https://www.reddit.com/r/Erookie/",
+  "dataType": "community"
+},
+{
+  "id": "2ykna",
+  "name": "t5_2ykna",
+  "title": "Grow My Business",
+  "headerImage": "https://f.thumbs.redditmedia.com/ln2GJkQ_topvbCGY.png",
+  "description": "Welcome to r/growmybusiness. This is the place to find and share creative advice to optimize your business growth.",
+  "over18": False,
+  "createdAt": "2013-09-21T21:43:58.000Z",
+  "scrapedAt": "2024-02-07T17:45:32.984Z",
+  "numberOfMembers": 46562,
+  "url": "https://www.reddit.com/r/growmybusiness/",
+  "dataType": "community"
+}]
+test = stage_3_evaluator_method(test_json_3)
 print(test)
