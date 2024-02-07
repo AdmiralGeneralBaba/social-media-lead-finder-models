@@ -131,9 +131,6 @@ def stage_3_reddit_api_calls(json) :
         print(local_result)
 
 
-
-
-
 product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
 # print(json_test)
