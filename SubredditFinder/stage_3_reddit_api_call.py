@@ -24,4 +24,16 @@ subreddit_search_json = {
     ],
     "skipComments": False
 }
-# def search_for_subreddits(keyword) : 
+
+def search_for_subreddits(keyword) : 
+    new_json = subreddit_search_json.copy()
+    new_json["searches"] = [keyword]
+    
+    info = apify_reddit_agent(new_json)
+    return info
+
+test_keyword = "housing"
+
+test_search = search_for_subreddits(test_keyword)
+
+print(test_search)
