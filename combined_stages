@@ -71,21 +71,35 @@ def create_json_full(product_description) :
 #Stage 3, reddit api calls
 
 def search_for_subreddits(keywords) : 
-    print("SEARCHING SUBREDDIT")
+
     new_json = subreddit_search_json.copy()
     new_json["searches"] = keywords
-    print(new_json)
+  
     
-    print("CALLING AGENT")
     info = apify_reddit_agent(new_json)
-    print("this is the info returned", info)
     return info
 
-# Stage 3 down here : 
-
 #Evaluator method for the pick local best stage : 
-def stage_3_evaluator_method(user_keyword_json) : 
-  print(user_keyword_json)
+def stage_3_evaluator_method(user, user_keyword_json) : 
+  def evaluate_local_subreddits(user_subreddits_json) :
+      user_description = user['user']
+      llm = OpenAI()
+      prompt = """Based on the subreddits given, pick all the relevent ones that relate to this end-user description : """ + f"""{user_description}""" + """you MUST output in this format and nothing else :
+
+urls : [
+'url1',
+'url2',
+'url3'.
+etc
+]
+
+2
+"""
+      temp = 1 
+      input_json = json.dumps(user_subreddits_json)
+      chosen_urls = llm.open_ai_gpt4_turbo_call(input_json, prompt, temp)
+      return chosen_urls
+      
   def breakdown_json(json) :
     new_json = []
     for json in user_keyword_json : 
@@ -100,15 +114,22 @@ def stage_3_evaluator_method(user_keyword_json) :
     return new_json
 
   new_json = breakdown_json(user_keyword_json)
-  return new_json
+
+  urls = evaluate_local_subreddits(new_json)
+  print(urls)
+  return urls
 
 
     
 # calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
-def stage_3_reddit_api_calls(json) : 
+
+def stage_3_reddit_api_calls(json) :  
+        
     for user in json['users'] : 
         local_result = search_for_subreddits(user['keywords'])
+        user_subreddits_json = stage_3_evaluator_method(user, local_result)
         print(local_result)
+
 
 
 
@@ -117,7 +138,7 @@ product_description = """ 'My startup aims to allow users to type in the problem
 # json_test = create_json_full(product_description)
 # print(json_test)
 
-test_json = {
+user_json = {
   "users": [
     { 
       "user": "Startup founders looking to identify their target audience",
@@ -173,5 +194,8 @@ test_json_3 = [{
   "url": "https://www.reddit.com/r/growmybusiness/",
   "dataType": "community"
 }]
-test = stage_3_evaluator_method(test_json_3)
+test = stage_3_evaluator_method(user_json['users'][0],test_json_3)
 print(test)
+
+
+
