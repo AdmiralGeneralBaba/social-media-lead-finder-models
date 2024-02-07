@@ -85,14 +85,14 @@ def stage_3_evaluator_method(user, user_keyword_json) :
       user_description = user['user']
       llm = OpenAI()
       prompt = """Based on the subreddits given, pick all the relevent ones that relate to this end-user description : """ + f"""{user_description}""" + """you MUST output in this format and nothing else :
-
-urls : [
+{
+"urls" : [
 'url1',
 'url2',
 'url3'.
 etc
 ]
-
+}
 2
 """
       temp = 1 
@@ -117,7 +117,9 @@ etc
 
   urls = evaluate_local_subreddits(new_json)
   print(urls)
-  return urls
+  url_json = json.loads(urls)
+  print(url_json)
+  return url_json
 
 
     
