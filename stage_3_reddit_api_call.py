@@ -28,12 +28,17 @@ subreddit_search_json = {
 def search_for_subreddits(keyword) : 
     new_json = subreddit_search_json.copy()
     new_json["searches"] = [keyword]
+    print(new_json)
     
     info = apify_reddit_agent(new_json)
     return info
 
-test_keyword = "housing"
 
-test_search = search_for_subreddits(test_keyword)
 
-print(test_search)
+
+
+# test_keyword = "housing"
+
+# test_search = search_for_subreddits(test_keyword)
+
+# print(test_search)

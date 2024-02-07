@@ -1,0 +1,144 @@
+from openai_calls import OpenAI
+from stage_1_end_user_description import stage_1_end_user_description
+import asyncio
+import json
+from reddit_scraper import apify_reddit_agent
+
+#global values : 
+subreddit_search_json = {
+    "debugMode": False,
+    "includeNSFW": True,
+    "maxComments": 5,
+    "maxCommunitiesCount": 1,
+    "maxItems": 5,
+    "maxPostCount": 5,
+    "maxUserCount": 5,
+    "proxy": {
+        "useApifyProxy": True,
+        "apifyProxyGroups": [
+            "RESIDENTIAL"
+        ]
+    },
+    "scrollTimeout": 40,
+    "searchComments": False,
+    "searchCommunities": True,
+    "searchPosts": False,
+    "searchUsers": False,
+    "searches": [
+        "test"
+    ],
+    "skipComments": False
+}
+
+test = apify_reddit_agent(subreddit_search_json)
+print(test)
+
+
+# Takes in the product description the user gave, and then returns a JSON/dictionary output with a users array of string values
+def stage_1_end_user_description(product_description) : 
+    llm = OpenAI()
+    prompt = """ From the product description inputted, give 3 users who will find this product useful.
+When you give your output, it must be in this dictionary format :
+
+{ "users" : [
+
+{"user" : "{output here}"},
+{"user" : "{output here}"}
+etc
+]
+}
+
+ONLY output this and nothing else."""
+    temp = 1
+    users = llm.open_ai_gpt4_turbo_call(product_description, prompt, temp)
+    return users
+
+
+
+def stage_2_keyword_generation(users) : 
+    llm = OpenAI()
+    prompt = """ based on these target customer types, Give 3 keywords for each customer type to serach on reddit for relevant communities. For each user input in the JSON given, you are to add a new field called 'keywords' structured like this : 
+    "keywords" : [{keyword 1}, {keyword 2}, etc]: 
+    here is the JSON you will add to : """ 
+    temp = 1 
+    users_json_with_keywords = llm.open_ai_gpt4_turbo_call(users, prompt, temp)
+    return users_json_with_keywords
+
+def create_json_full(product_description) : 
+    end_users = stage_1_end_user_description(product_description)
+    keywords_addon = stage_2_keyword_generation(end_users)
+    input_json = json.loads(keywords_addon)
+    return input_json
+
+#Stage 3, reddit api calls
+
+def search_for_subreddits(keywords) : 
+    print("SEARCHING SUBREDDIT")
+    new_json = subreddit_search_json.copy()
+    new_json["searches"] = keywords
+    print(new_json)
+    
+    print("CALLING AGENT")
+    info = apify_reddit_agent(new_json)
+    print("this is the info returned", info)
+    return info
+
+# Stage 3 down here : 
+
+#Evaluator method for the pick local best stage : 
+def stage_3_evaluator_method(user_keyword_json) : 
+  def breakdown_json(json) :
+    new_json = []
+    for json in user_keyword_json : 
+        local_new_json = {
+          'title' : json['title'],
+          'description' : json['description'],
+          'numberOfMembers' : json['description'],
+          'url' : json['url']
+        }
+        new_json.append(local_new_json)
+  new_json = breakdown_json(user_keyword_json)
+  return new_json
+
+stage_3_evaluator_method()
+    
+# calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
+def stage_3_reddit_api_calls(json) : 
+    for user in json['users'] : 
+        local_result = search_for_subreddits(user['keywords'])
+        print(local_result)
+
+
+
+
+
+
+
+
+
+
+
+
+product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+# json_test = create_json_full(product_description)
+# print(json_test)
+
+test_json = {
+  "users": [
+    { 
+      "user": "Startup founders looking to identify their target audience",
+      "keywords": ["startup advice", "customer discovery", "target market"]
+    },
+    {
+      "user": "Marketing professionals seeking to perform market analysis",
+      "keywords": ["market research", "marketing strategy", "consumer insights"]
+    },
+    {
+      "user": "Social media managers aiming to engage with potential customers",
+      "keywords": ["social media marketing", "audience engagement", "brand community"]
+    }
+  ]
+}
+
+test = stage_3_evaluator_method(test_json)
+print(test)
