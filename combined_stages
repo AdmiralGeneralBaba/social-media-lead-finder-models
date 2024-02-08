@@ -116,7 +116,7 @@ etc
   new_json = breakdown_json(user_keyword_json)
 
   urls = evaluate_local_subreddits(new_json)
-  print(urls)
+
   url_json = json.loads(urls)
   print(url_json)
   return url_json
@@ -126,12 +126,13 @@ etc
 # calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
 
 def stage_3_reddit_api_calls(json) :  
-        
     for user in json['users'] : 
         local_result = search_for_subreddits(user['keywords'])
+        print("this is the scrape from the stage 3 method : ", local_result)
         user_subreddits_json = stage_3_evaluator_method(user, local_result)
+        user.update(user_subreddits_json)
         print(local_result)
-
+    return json
 
 product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
@@ -150,6 +151,15 @@ user_json = {
     {
       "user": "Social media managers aiming to engage with potential customers",
       "keywords": ["social media marketing", "audience engagement", "brand community"]
+    }
+  ]
+}
+
+user_json2 = {
+     "users": [
+    { 
+      "user": "Startup founders looking to identify their target audience",
+      "keywords": ["startup advice", "customer discovery", "target market"]
     }
   ]
 }
@@ -193,8 +203,12 @@ test_json_3 = [{
   "url": "https://www.reddit.com/r/growmybusiness/",
   "dataType": "community"
 }]
-test = stage_3_evaluator_method(user_json['users'][0],test_json_3)
-print(test)
 
+
+# test = stage_3_evaluator_method(user_json2['users'][0],test_json_3)
+# print(test)
+
+links = stage_3_reddit_api_calls(user_json2)
+print(links)
 
 

@@ -21,7 +21,7 @@ subreddit_search_json = {
     "searchPosts": False,
     "searchUsers": False,
     "searches": [
-        "vietnam"
+        "vietnam", "war", "Art"
     ],
     "skipComments": False
 }
