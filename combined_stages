@@ -55,7 +55,7 @@ ONLY output this and nothing else."""
 
 def stage_2_keyword_generation(users) : 
     llm = OpenAI()
-    prompt = """ based on these target customer types, Give 3 keywords for each customer type to serach on reddit for relevant communities. For each user input in the JSON given, you are to add a new field called 'keywords' structured like this : 
+    prompt = """ based on these target customer types, Give 3 keywords for each customer type to search on reddit for relevant communities. For each user input in the JSON given, you are to add a new field called 'keywords' structured like this : 
     "keywords" : [{keyword 1}, {keyword 2}, etc]: 
     here is the JSON you will add to : """ 
     temp = 1 
@@ -84,7 +84,7 @@ def stage_3_evaluator_method(user, user_keyword_json) :
   def evaluate_local_subreddits(user_subreddits_json) :
       user_description = user['user']
       llm = OpenAI()
-      prompt = """Based on the subreddits given, pick all the relevent ones that relate to this end-user description : """ + f"""{user_description}""" + """you MUST output in this format and nothing else :
+      prompt = """Based on the subreddits given, pick all the relevent ones that relate to this end-user description. Take into account ESPECIALLY the decription of the community; IT MUST relate to the end user.: """ + f"""{user_description}""" + """you MUST output in this format and nothing else :
 {
 "urls" : [
 'url1',
@@ -134,9 +134,39 @@ def stage_3_reddit_api_calls(json) :
         print(local_result)
     return json
 
+def stage_3_spread_url(json) : 
+    urls = []
+    for user in json : 
+      urls.extend(user['urls'])
+    print(urls)
+    return urls
+
+def stage_3_final(json) : 
+  new_json = stage_3_reddit_api_calls(json)
+  urls = stage_3_spread_url(new_json['users'])
+  return urls
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################## TESTING CODE ########################
 product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
 # print(json_test)
+
 
 user_json = {
   "users": [
@@ -160,6 +190,10 @@ user_json2 = {
     { 
       "user": "Startup founders looking to identify their target audience",
       "keywords": ["startup advice", "customer discovery", "target market"]
+    },
+    {
+      "user": "Marketing professionals seeking to perform market analysis",
+      "keywords": ["market research", "marketing strategy", "consumer insights"]
     }
   ]
 }
@@ -204,11 +238,11 @@ test_json_3 = [{
   "dataType": "community"
 }]
 
-
+ 
 # test = stage_3_evaluator_method(user_json2['users'][0],test_json_3)
 # print(test)
 
-links = stage_3_reddit_api_calls(user_json2)
+links = stage_3_final(user_json2)
 print(links)
 
 
