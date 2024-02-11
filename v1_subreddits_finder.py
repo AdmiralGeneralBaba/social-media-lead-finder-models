@@ -1,5 +1,4 @@
 from openai_calls import OpenAI
-from stage_1_end_user_description import stage_1_end_user_description
 import asyncio
 import json
 from reddit_scraper import apify_reddit_agent
@@ -25,7 +24,7 @@ subreddit_search_json = {
     "searchPosts": False,
     "searchUsers": False,
     "searches": [
-        "test"
+    
     ],
     "skipComments": False
 }
@@ -103,7 +102,6 @@ etc
   def breakdown_json(json) :
     new_json = []
     for json in user_keyword_json : 
-        
         local_new_json = {
           "title" : json["title"],
           'description' : json['description'],
@@ -242,7 +240,7 @@ test_json_3 = [{
 # test = stage_3_evaluator_method(user_json2['users'][0],test_json_3)
 # print(test)
 
-links = stage_3_final(user_json2)
-print(links)
+# links = stage_3_final(user_json2)
+# print(links)
 
 
