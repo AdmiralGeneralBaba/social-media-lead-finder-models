@@ -1,10 +1,6 @@
 import embedding_module as e
-
+from test_json import test_dictionary
 test = "test"
-
-vectors = e.get_embedding(test) 
-print(vectors)
-test = e.query_pinecone_vector_database(index="test-index",vectors=vectors, top_k=1)
-
-print(test)
- 
+print(len(test_dictionary))
+vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
+print(vector_database)
