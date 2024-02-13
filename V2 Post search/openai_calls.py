@@ -63,13 +63,13 @@ class OpenAI:
 
         # If setTemperature is provided, include it in the completion
         if setTemperature:
-            completion = openai.ChatCompletion.create(
+            completion = openai.chat.completions.create(
                 model="gpt-4",
                 messages=messages,
                 temperature=setTemperature
             )
         else:
-            completion = openai.ChatCompletion.create(
+            completion = openai.chat.completions.create(
                 model="gpt-4",
                 messages=messages
             )
