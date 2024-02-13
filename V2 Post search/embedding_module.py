@@ -81,5 +81,6 @@ def embed_and_upsert_to_pinecone(post_json) :
     return pinecone_vd
 
 
+
 input_vectors = get_embedding("struggling to advertise properly")
 print(query_pinecone_vector_database("test-index", input_vectors, 5))
