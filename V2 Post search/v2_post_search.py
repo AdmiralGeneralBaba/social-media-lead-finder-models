@@ -3,6 +3,7 @@ from test_json import test_dictionary
 from openai_calls import OpenAI
 import re
 import json
+from embedding_module import query_pinecone_vector_database, get_embedding
 
 
 def vd_search_queries(problem) : 
@@ -48,7 +49,39 @@ Lets think step by step to get to the right answer. """
         return True
     return False
 
+# retruns the distinct K elements from all of the search queries
+def mulitple_query_vd(queries, index) : 
+    vector_queries = []
+    returned_k_results = [] 
+    id_set = set()
+    # This queries the VD with the search terms from the LLM.
+    for query in queries : 
+        vector_queries.append(get_embedding(query))
+    
+    for vector in vector_queries : 
+        similar_embeddings = query_pinecone_vector_database(index, vector, 10)
+        for single_similar_embedding in similar_embeddings['matches']  : 
+            if(single_similar_embedding['id'] not in id_set)  : 
+                returned_k_results.append(single_similar_embedding)
+                id_set.add(single_similar_embedding['id'])
+    #Returns a list of the top K results for all of the queries types that are a distinct type
+    return returned_k_results
 
+
+# Evaluates each of the k results and returns the one that gave back true.
+def evaluate_returned_k_results(problem : str, returned_k_results) : 
+    evaluated_results = []
+    for k_result in returned_k_results : 
+        if (post_evaluation(problem, k_result['metadata']['content'])) == True : 
+            evaluated_results.append(k_result)
+    return evaluated_results
+
+
+def v2_post_search(problem, index) : 
+   search_queries = vd_search_queries(problem)
+   returned_k_values = mulitple_query_vd(search_queries, index=index)
+   final_leads =  evaluate_returned_k_results(problem, returned_k_values)
+   return final_leads
 
 
 
