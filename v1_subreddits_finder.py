@@ -102,13 +102,14 @@ etc
   def breakdown_json(json) :
     new_json = []
     for json in user_keyword_json : 
-        local_new_json = {
-          "title" : json["title"],
-          'description' : json['description'],
-          'numberOfMembers' : json["numberOfMembers"],
-          'url' : json['url']
-        }
-        new_json.append(local_new_json)
+        if json['dataType'] != 'fake' :
+          local_new_json = {
+            "title" : json["title"],
+            'description' : json['description'],
+            'numberOfMembers' : json["numberOfMembers"],
+            'url' : json['url']
+          }
+          new_json.append(local_new_json)
     return new_json
 
   new_json = breakdown_json(user_keyword_json)
@@ -139,7 +140,10 @@ def stage_3_spread_url(json) :
     print(urls)
     return urls
 
-def stage_3_final(json) : 
+
+#Inputted is the product description, the search JSON is generated, then the API endpoints are called and the resutls are returned, then the JSON is formated in the correct way : 
+def stage_3_final(product_description) : 
+  json = create_json_full(product_description=product_description)
   new_json = stage_3_reddit_api_calls(json)
   urls = stage_3_spread_url(new_json['users'])
   return urls
@@ -157,84 +161,84 @@ def stage_3_final(json) :
 
 
 
-
-
-
 ########################## TESTING CODE ########################
-product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
 # print(json_test)
 
+stage_3_final(test_product_description)
 
-user_json = {
-  "users": [
-    { 
-      "user": "Startup founders looking to identify their target audience",
-      "keywords": ["startup advice", "customer discovery", "target market"]
-    },
-    {
-      "user": "Marketing professionals seeking to perform market analysis",
-      "keywords": ["market research", "marketing strategy", "consumer insights"]
-    },
-    {
-      "user": "Social media managers aiming to engage with potential customers",
-      "keywords": ["social media marketing", "audience engagement", "brand community"]
-    }
-  ]
-}
 
-user_json2 = {
-     "users": [
-    { 
-      "user": "Startup founders looking to identify their target audience",
-      "keywords": ["startup advice", "customer discovery", "target market"]
-    },
-    {
-      "user": "Marketing professionals seeking to perform market analysis",
-      "keywords": ["market research", "marketing strategy", "consumer insights"]
-    }
-  ]
-}
 
-test_json_2 = [{
-    "id": "2z6wn",
-    "name": "t5_2z6wn",
-    "title": "Streetwear Startup",
-    "headerImage": "https://a.thumbs.redditmedia.com/gq9561mrzeY9TrVx.png",
-    "description": "The underground community no one wants to admit they're from.\n\nThis subreddit serves to be a platform for streetwear brand owners (startups and established) to discuss ideas, trade knowledge, share your brand, and connect with others.",
-    "over18": False,
-    "createdAt": "2013-11-22T21:49:18.000Z",
-    "scrapedAt": "2024-02-07T18:20:58.179Z",
-    "numberOfMembers": 775612,
-    "url": "https://www.reddit.com/r/streetwearstartup/",
-    "dataType": "community"
-}]
+# user_json = {
+#   "users": [
+#     { 
+#       "user": "Startup founders looking to identify their target audience",
+#       "keywords": ["startup advice", "customer discovery", "target market"]
+#     },
+#     {
+#       "user": "Marketing professionals seeking to perform market analysis",
+#       "keywords": ["market research", "marketing strategy", "consumer insights"]
+#     },
+#     {
+#       "user": "Social media managers aiming to engage with potential customers",
+#       "keywords": ["social media marketing", "audience engagement", "brand community"]
+#     }
+#   ]
+# }
 
-test_json_3 = [{
-  "id": "2xquw",
-  "name": "t5_2xquw",
-  "title": "Startup Business Advice",
-  "description": "Startup business advice and ideas ",
-  "over18": False,
-  "createdAt": "2013-07-02T13:51:45.000Z",
-  "scrapedAt": "2024-02-07T17:45:32.873Z",
-  "numberOfMembers": 77,
-  "url": "https://www.reddit.com/r/Erookie/",
-  "dataType": "community"
-},
-{
-  "id": "2ykna",
-  "name": "t5_2ykna",
-  "title": "Grow My Business",
-  "headerImage": "https://f.thumbs.redditmedia.com/ln2GJkQ_topvbCGY.png",
-  "description": "Welcome to r/growmybusiness. This is the place to find and share creative advice to optimize your business growth.",
-  "over18": False,
-  "createdAt": "2013-09-21T21:43:58.000Z",
-  "scrapedAt": "2024-02-07T17:45:32.984Z",
-  "numberOfMembers": 46562,
-  "url": "https://www.reddit.com/r/growmybusiness/",
-  "dataType": "community"
-}]
+# user_json2 = {
+#      "users": [
+#     { 
+#       "user": "Startup founders looking to identify their target audience",
+#       "keywords": ["startup advice", "customer discovery", "target market"]
+#     },
+#     {
+#       "user": "Marketing professionals seeking to perform market analysis",
+#       "keywords": ["market research", "marketing strategy", "consumer insights"]
+#     }
+#   ]
+# }
+
+# test_json_2 = [{
+#     "id": "2z6wn",
+#     "name": "t5_2z6wn",
+#     "title": "Streetwear Startup",
+#     "headerImage": "https://a.thumbs.redditmedia.com/gq9561mrzeY9TrVx.png",
+#     "description": "The underground community no one wants to admit they're from.\n\nThis subreddit serves to be a platform for streetwear brand owners (startups and established) to discuss ideas, trade knowledge, share your brand, and connect with others.",
+#     "over18": False,
+#     "createdAt": "2013-11-22T21:49:18.000Z",
+#     "scrapedAt": "2024-02-07T18:20:58.179Z",
+#     "numberOfMembers": 775612,
+#     "url": "https://www.reddit.com/r/streetwearstartup/",
+#     "dataType": "community"
+# }]
+
+# test_json_3 = [{
+#   "id": "2xquw",
+#   "name": "t5_2xquw",
+#   "title": "Startup Business Advice",
+#   "description": "Startup business advice and ideas ",
+#   "over18": False,
+#   "createdAt": "2013-07-02T13:51:45.000Z",
+#   "scrapedAt": "2024-02-07T17:45:32.873Z",
+#   "numberOfMembers": 77,
+#   "url": "https://www.reddit.com/r/Erookie/",
+#   "dataType": "community"
+# },
+# {
+#   "id": "2ykna",
+#   "name": "t5_2ykna",
+#   "title": "Grow My Business",
+#   "headerImage": "https://f.thumbs.redditmedia.com/ln2GJkQ_topvbCGY.png",
+#   "description": "Welcome to r/growmybusiness. This is the place to find and share creative advice to optimize your business growth.",
+#   "over18": False,
+#   "createdAt": "2013-09-21T21:43:58.000Z",
+#   "scrapedAt": "2024-02-07T17:45:32.984Z",
+#   "numberOfMembers": 46562,
+#   "url": "https://www.reddit.com/r/growmybusiness/",
+#   "dataType": "community"
+# }]
 
  
 # test = stage_3_evaluator_method(user_json2['users'][0],test_json_3)

@@ -29,7 +29,8 @@ subreddit_search_json = {
 
 def apify_reddit_agent(json_input) :    
     info_array = []
-    client = ApifyClient('apify_api_fKZ25ERj0eKmcONf6XJtjoGbrLbL7s1WrYyh')
+    #Changed the API key here to the samuel account instead.
+    client = ApifyClient('apify_api_caOfCyl6W2Sa205GuGGOpAZ3R1oseh1RLv9L')
 
     run_input=json_input
 
