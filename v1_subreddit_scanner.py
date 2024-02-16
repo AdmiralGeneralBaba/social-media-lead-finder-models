@@ -4,16 +4,16 @@ from openai_calls import OpenAI
 import re
 
 #global variables
-test_url_array = ['https://www.reddit.com/r/Erookie/    ', 'https://www.reddit.com/r/PMBuddy/', 'https://www.reddit.com/r/digital_marketing/', 'https://www.reddit.com/r/Sensory/', 'https://www.reddit.com/r/Marketresearch/']
+test_url_array = ['https://www.reddit.com/r/Entrepreneur/', 'https://www.reddit.com/r/startups/', 'https://www.reddit.com/r/datascience/', 'https://www.reddit.com/r/Marketing_Strategies/', 'https://www.reddit.com/r/LeadGeneration/']
 
 subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
-    "maxComments": 5,
+    "maxComments": 0,
     "maxCommunitiesCount": 1,
     "maxItems": 300,
-    "maxPostCount": 5,
-    "maxUserCount": 5,
+    "maxPostCount": 300, 
+    "maxUserCount": 300,
     "proxy": {
         "useApifyProxy": True,
         "apifyProxyGroups": [
@@ -67,5 +67,5 @@ def stage_4_scrape_posts(subreddit_urls) :
 
 
 
-scrapped_posts = stage_4_scrape_posts(urls)
+scrapped_posts = stage_4_scrape_posts(test_url_array)
 print(scrapped_posts)   

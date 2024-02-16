@@ -1,5 +1,7 @@
 from openai import OpenAI
 from pinecone import Pinecone, ServerlessSpec
+from test_dictionary import test_dictionary
+
 
 pc = Pinecone(api_key='b726d64c-a756-4aca-a368-a5b31f1f76a6')
 
@@ -14,7 +16,6 @@ def process_post_json(jsons) :
     new_jsons = []
 
     for json in jsons : 
-        print(json)
         content = json['title'] + " " + json['body']
         new_json = {'id' : json['id'], 'content' : content, 'username' : json['username'], 'url' : json['url']}
         new_jsons.append(new_json)
@@ -40,6 +41,7 @@ def add_embedding_post_json(process_post_json) :
     print(process_post_json)
     for post_json in process_post_json : 
         post_json_embedding = get_embedding(post_json['content'])
+        print("added embedding for ")
         post_json['values'] = post_json_embedding
     return process_post_json
 
@@ -81,6 +83,24 @@ def embed_and_upsert_to_pinecone(post_json) :
     return pinecone_vd
 
 
+def query_fetch_id_information(id_set, index) : 
+    index = pc.Index(index)
+    id_information = []
+    id_list = list(id_set)
 
-input_vectors = get_embedding("struggling to advertise properly")
-print(query_pinecone_vector_database("test-index", input_vectors, 5))
+    index_results = index.fetch(ids=id_list)
+    for key in index_results['vectors']: 
+        index_result = index_results['vectors'][key]
+        id_information.append(index_result)
+    return id_information
+
+# embed_and_upsert_to_pinecone(test_dictionary)
+# input_vectors = get_embedding("struggling to advertise properly")
+# print(query_pinecone_vector_database("test-index", input_vectors, 5))
+
+
+# test_index = "test-index"
+
+# index = pc.Index(test_index)
+
+# id_list = ['t3_1aq38xe', 't3_1aqlq57','t3_1ard7c5']

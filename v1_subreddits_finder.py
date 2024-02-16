@@ -62,8 +62,11 @@ def stage_2_keyword_generation(users) :
     return users_json_with_keywords
 
 def create_json_full(product_description) : 
+    print("Getting end user description...")
     end_users = stage_1_end_user_description(product_description)
+    print("Getting the keywords to search for subreddits...")
     keywords_addon = stage_2_keyword_generation(end_users)
+    print("Creating the JSON from the string...")
     input_json = json.loads(keywords_addon)
     return input_json
 
@@ -166,7 +169,7 @@ test_product_description = """ 'My startup aims to allow users to type in the pr
 # json_test = create_json_full(product_description)
 # print(json_test)
 
-stage_3_final(test_product_description)
+# stage_3_final(test_product_description)
 
 
 
