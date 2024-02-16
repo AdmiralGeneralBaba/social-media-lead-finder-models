@@ -48,8 +48,7 @@ def add_embedding_post_json(process_post_json) :
 #upserts the proccessed post json with the vlaues of the vectors iwtihin it into the pinecone index database. Have this, in the future, relate to the user's ID so that everything they have scrapped is kept within the vector 
 # database as a store (or perhaps in the far futrue have it so that ALL reddit subreddits are crawled and updated on a mass scale, but that is for another time.)
 
-def create_pinecone_index_post_json(processed_post_json) : 
-    index_name = "test-index"
+def create_pinecone_index_post_json(processed_post_json, index_name) : 
     if index_name not in pc.list_indexes().names():
     # Do something, such as create the index
         pc.create_index(
@@ -73,12 +72,12 @@ def create_pinecone_index_post_json(processed_post_json) :
     )
     return index_name
 
-def embed_and_upsert_to_pinecone(post_json) : 
-    half_processed_post_json = process_post_json(post_json)
+def embed_and_upsert_to_pinecone(raw_post_json, index) : 
+    half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
     fully_processed_json = add_embedding_post_json(half_processed_post_json)
     print("Embeddings added! adding to pinecone...")
-    pinecone_vd = create_pinecone_index_post_json(fully_processed_json)
+    pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
     print("Added to pinecone!")
     return pinecone_vd
 
@@ -87,7 +86,6 @@ def query_fetch_id_information(id_set, index) :
     index = pc.Index(index)
     id_information = []
     id_list = list(id_set)
-
     index_results = index.fetch(ids=id_list)
     for key in index_results['vectors']: 
         index_result = index_results['vectors'][key]

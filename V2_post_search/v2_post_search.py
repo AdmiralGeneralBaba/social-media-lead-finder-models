@@ -3,7 +3,7 @@ from test_json import test_dictionary
 from openai_calls import OpenAI
 import re
 import json
-from embedding_module import query_pinecone_vector_database, get_embedding, query_fetch_id_information
+
 
 
 def vd_search_queries(problem) : 
@@ -58,16 +58,16 @@ def mulitple_query_vd(queries, index) :
     # This queries the VD with the search terms from the LLM.
     for query in queries : 
         print("generated embeddings for queries...")
-        vector_queries.append(get_embedding(query))
+        vector_queries.append(e.get_embedding(query))
     
     for vector in vector_queries : 
-        similar_embeddings = query_pinecone_vector_database(index, vector, 10)
+        similar_embeddings = e.query_pinecone_vector_database(index, vector, 10)
         for single_similar_embedding in similar_embeddings['matches']  : 
             if(single_similar_embedding['id'] not in id_set)  : 
                
                 id_set.add(single_similar_embedding['id'])
     print("fetching id information...")
-    returned_k_results = query_fetch_id_information(id_set, index)
+    returned_k_results = e.query_fetch_id_information(id_set, index)
             
     #Returns a list of the top K results for all of the queries types that are a distinct type
     return returned_k_results
@@ -84,24 +84,25 @@ def evaluate_returned_k_results(problem : str, returned_k_results) :
     return evaluated_results
 
 
-def v2_post_search(problem, index) : 
-   search_queries = vd_search_queries(problem)
+def v2_post_search(product_description, index) : 
+   search_queries = vd_search_queries(product_description)
    returned_k_values = mulitple_query_vd(search_queries, index=index)
    print("Here are the number of returned k values : ", len(returned_k_values))
-   final_leads =  evaluate_returned_k_results(problem, returned_k_values)
+   final_leads =  evaluate_returned_k_results(product_description, returned_k_values)
 
    return final_leads
 
 
-test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
-test_index = "test-index"
-final_leads = v2_post_search(test_product_description, test_index)
-print("these are the final leads : ")
-for i in range(len(final_leads)) :
-    print(len(final_leads))
-    print(final_leads[i]['id'])
+# test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+# test_index = "test-index"
+# final_leads = v2_post_search(test_product_description, test_index)
+# print("these are the final leads : ")
+# for i in range(len(final_leads)) :
+#     print(len(final_leads))
+#     print(final_leads[i]['id'])
  
 # test = "test"
 # print(len(test_dictionary))
 # vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
 # print(vector_database)
+
