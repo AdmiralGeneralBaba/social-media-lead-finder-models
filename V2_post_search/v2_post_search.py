@@ -1,5 +1,5 @@
-import embedding_module as e
-from test_json import test_dictionary
+import V2_post_search.embedding_module as e
+from V2_post_search.test_dictionary import text_dictionary
 from openai_calls import OpenAI
 import re
 import json
@@ -106,3 +106,6 @@ def v2_post_search(product_description, index) :
 # vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
 # print(vector_database)
 
+id_set = ['t3_1aq38xe']
+test = e.query_fetch_id_information(id_set, 'test-index')
+print(test)

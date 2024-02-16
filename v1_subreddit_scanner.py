@@ -11,7 +11,7 @@ subreddit_search_json = {
     "includeNSFW": True,
     "maxComments": 0,
     "maxCommunitiesCount": 1,
-    "maxItems": 300,
+    "maxItems": 10,
     "maxPostCount": 300, 
     "maxUserCount": 300,
     "proxy": {
@@ -67,5 +67,5 @@ def stage_4_scrape_posts(subreddit_urls) :
 
 
 
-scrapped_posts = stage_4_scrape_posts(test_url_array)
-print(scrapped_posts)   
+# scrapped_posts = stage_4_scrape_posts(test_url_array)
+# print(scrapped_posts)   

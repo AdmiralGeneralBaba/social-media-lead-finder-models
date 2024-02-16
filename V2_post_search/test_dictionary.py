@@ -1,4 +1,4 @@
-test_dictionary = [{
+text_dictionary = [{
   "id": "t3_1arc3to",
   "parsedId": "1arc3to",
   "url": "https://www.reddit.com/r/Entrepreneur/comments/1arc3to/thank_you_thursday_february_15_2024/",
