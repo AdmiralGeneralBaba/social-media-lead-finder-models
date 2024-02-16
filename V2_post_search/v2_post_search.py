@@ -52,7 +52,7 @@ Lets think step by step to get to the right answer. """
 
 
 # retruns the distinct K elements from all of the search queries
-def mulitple_query_vd(queries, index) : 
+def multiple_query_vd(queries, index) : 
     vector_queries = []
     id_set = set()
     # This queries the VD with the search terms from the LLM.
@@ -86,7 +86,7 @@ def evaluate_returned_k_results(problem : str, returned_k_results) :
 
 def v2_post_search(product_description, index) : 
    search_queries = vd_search_queries(product_description)
-   returned_k_values = mulitple_query_vd(search_queries, index=index)
+   returned_k_values = multiple_query_vd(search_queries, index=index)
    print("Here are the number of returned k values : ", len(returned_k_values))
    final_leads =  evaluate_returned_k_results(product_description, returned_k_values)
 

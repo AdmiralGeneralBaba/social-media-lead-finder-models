@@ -66,6 +66,7 @@ def create_json_full(product_description) :
     end_users = stage_1_end_user_description(product_description)
     print("Getting the keywords to search for subreddits...")
     keywords_addon = stage_2_keyword_generation(end_users)
+    print("Here are the keywords : ", keywords_addon)
     print("Creating the JSON from the string...")
     input_json = json.loads(keywords_addon)
     return input_json
@@ -73,13 +74,18 @@ def create_json_full(product_description) :
 #Stage 3, reddit api calls
 
 def search_for_subreddits(keywords) : 
-
+    info_array = []
     new_json = subreddit_search_json.copy()
-    new_json["searches"] = keywords
-  
-    
-    info = apify_reddit_agent(new_json)
-    return info
+    for keyword in keywords :
+
+      single_keyword_array = [keyword]
+      new_json["searches"] = single_keyword_array
+
+      # Need to change this up so it can run multiple apify agents
+      info = apify_reddit_agent(new_json)
+      info_array.append(info)
+    new_list = [item for subarray in info_array for item in subarray]
+    return new_list
 
 #Evaluator method for the pick local best stage : 
 def stage_3_evaluator_method(user, user_keyword_json) : 
