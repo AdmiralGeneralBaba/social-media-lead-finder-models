@@ -1,17 +1,17 @@
 from openai_calls import OpenAI
 import asyncio
 import json
-from reddit_scraper import apify_reddit_agent
+from reddit_scraper import apify_reddit_agent_async
 
 #global values : 
 subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
-    "maxComments": 5,
-    "maxCommunitiesCount": 1,
-    "maxItems": 5,
-    "maxPostCount": 5,
-    "maxUserCount": 5,
+    "maxComments": 0,
+    "maxCommunitiesCount": 10,
+    "maxItems": 10,
+    "maxPostCount": 0,
+    "maxUserCount": 0,
     "proxy": {
         "useApifyProxy": True,
         "apifyProxyGroups": [
@@ -73,17 +73,22 @@ def create_json_full(product_description) :
 
 #Stage 3, reddit api calls
 
-def search_for_subreddits(keywords) : 
-    info_array = []
-    new_json = subreddit_search_json.copy()
+async def search_for_subreddits(keywords) : 
+    tasks = []
+    
+    print("these are the keywords : ", keywords)
     for keyword in keywords :
-
+      new_json = subreddit_search_json.copy()
+      print("this is the keyword : ", keyword)
       single_keyword_array = [keyword]
       new_json["searches"] = single_keyword_array
-
-      # Need to change this up so it can run multiple apify agents
-      info = apify_reddit_agent(new_json)
-      info_array.append(info)
+      print(new_json)
+      # Loads up the caroutines for the apify reddit scraping
+      info = apify_reddit_agent_async(new_json)
+      tasks.append(info)
+    # Flatten the array (as the apify agent returns a array, adn then this is made into a array of arrays)#
+    print(tasks)
+    info_array = await asyncio.gather(*tasks)
     new_list = [item for subarray in info_array for item in subarray]
     return new_list
 
@@ -171,6 +176,10 @@ def stage_3_final(product_description) :
 
 
 ########################## TESTING CODE ########################
+test_keywords = ['vietnam', 'china', 'japan']
+
+test_search = asyncio.run(search_for_subreddits(keywords=test_keywords))
+print(test_search)
 test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
 # print(json_test)

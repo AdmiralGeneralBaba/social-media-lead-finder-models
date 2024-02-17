@@ -31,7 +31,7 @@ subreddit_search_json = {
 def apify_reddit_agent(json_input) :    
     info_array = []
     #Changed the API key here to the samuel account instead.
-    client = ApifyClient('apify_api_caOfCyl6W2Sa205GuGGOpAZ3R1oseh1RLv9L')
+    client = ApifyClient('apify_api_w727jhNXMt5mdg2rc5pfxkSBX2syyM01D6jc')
 
     run_input=json_input
 
@@ -45,18 +45,18 @@ def apify_reddit_agent(json_input) :
 async def apify_reddit_agent_async(json_input) :    
     info_array = []
     #Changed the API key here to the samuel account instead.
-    client = ApifyClientAsync('apify_api_caOfCyl6W2Sa205GuGGOpAZ3R1oseh1RLv9L')
+    client = ApifyClientAsync('apify_api_w727jhNXMt5mdg2rc5pfxkSBX2syyM01D6jc')
 
     run_input=json_input
 
     print("calling API endpoint")
     run = await client.actor("trudax/reddit-scraper-lite").call(run_input=run_input)
     print("looping through items...")
-    for item in client.dataset(run["defaultDatasetId"]).iterate_items() : 
+    async for item in client.dataset(run["defaultDatasetId"]).iterate_items() : 
         info_array.append(item)
     return info_array 
 
-test = apify_reddit_agent_async(subreddit_search_json)
+    # test = apify_reddit_agent_async(subreddit_search_json)
 
-test_result = asyncio.run(test)
-print(test_result)
+    # test_result = asyncio.run(test)
+    # print(test_result)
