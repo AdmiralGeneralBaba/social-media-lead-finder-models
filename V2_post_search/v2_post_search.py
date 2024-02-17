@@ -1,6 +1,7 @@
-import V2_post_search.embedding_module as e
-from V2_post_search.test_dictionary import text_dictionary
+import embedding_module as e
+from test_dictionary import text_dictionary
 from openai_calls import OpenAI
+import asyncio
 import re
 import json
 
@@ -26,7 +27,7 @@ Here is the problem  :
 
 
 # evaluates a post to see if it a good lead, return true if yes otherwise returns false.
-def post_evaluation(problem, content) : 
+async def post_evaluation(problem, content) : 
     llm = OpenAI()
     prompt = """   You are an expert lead validator, who has decades of experience in being able to identify whether or not a lead has potential interest in a company.
 
@@ -42,7 +43,7 @@ and here is the reddit post :
 
 Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = llm.open_ai_gpt4_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -74,32 +75,39 @@ def multiple_query_vd(queries, index) :
 
 
 # Evaluates each of the k results and returns the one that gave back true.
-def evaluate_returned_k_results(problem : str, returned_k_results) : 
+async def evaluate_returned_k_results(problem : str, returned_k_results) : 
     evaluated_results = []
+    evaluation_tasks = []
     print("Evaluating post leads...")
     for k_result in returned_k_results : 
-        if (post_evaluation(problem, k_result['metadata']['content'])) == True : 
+        evaluation_tasks.append(post_evaluation(problem, k_result['metadata']['content']))
+    evaluation_returned = await asyncio.gather(*evaluation_tasks)
+
+    for k_result, result in zip(returned_k_results, evaluation_returned)  : 
+        if result == True :
             evaluated_results.append(k_result)
-            print(k_result['metadata']['content'])
+    
     return evaluated_results
 
 
-def v2_post_search(product_description, index) : 
+
+async def v2_post_search(product_description, index) : 
    search_queries = vd_search_queries(product_description)
    returned_k_values = multiple_query_vd(search_queries, index=index)
    print("Here are the number of returned k values : ", len(returned_k_values))
-   final_leads =  evaluate_returned_k_results(product_description, returned_k_values)
+   final_leads =  await evaluate_returned_k_results(product_description, returned_k_values)
 
    return final_leads
 
 
-# test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
-# test_index = "test-index"
-# final_leads = v2_post_search(test_product_description, test_index)
-# print("these are the final leads : ")
-# for i in range(len(final_leads)) :
-#     print(len(final_leads))
-#     print(final_leads[i]['id'])
+test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+test_index = "test-index"
+
+final_leads = asyncio.run(v2_post_search(test_product_description, test_index)) 
+print("these are the final leads : ")
+for i in range(len(final_leads)) :
+    print(len(final_leads))
+    print(final_leads[i]['id'])
  
 # test = "test"
 # print(len(test_dictionary))

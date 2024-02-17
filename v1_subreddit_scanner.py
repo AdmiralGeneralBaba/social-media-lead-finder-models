@@ -1,6 +1,8 @@
 from v1_subreddits_finder import stage_3_final
-from reddit_scraper import apify_reddit_agent
+from reddit_scraper import apify_reddit_agent, apify_reddit_agent_async
 from openai_calls import OpenAI
+import asyncio
+import copy
 import re
 
 #global variables
@@ -31,16 +33,23 @@ subreddit_search_json = {
     ]
 }
 
-urls = ['https://www.reddit.com/r/Erookie/', 'https://www.reddit.com/r/PMBuddy/', 'https://www.reddit.com/r/digital_marketing/', 'https://www.reddit.com/r/Sensory/', 'https://www.reddit.com/r/Marketresearch/']
+urls = ['https://www.reddit.com/r/Erookie/', 'https://www.reddit.com/r/PMBuddy/', 'https://www.reddit.com/r/digital_marketing/']
 
-def stage_4_scrape_posts(subreddit_urls) : 
-    new_json = subreddit_search_json.copy()
+async def stage_4_scrape_posts(subreddit_urls) : 
+    tasks = []
     for url in subreddit_urls: 
+        new_json = copy.deepcopy(subreddit_search_json)
         new_json['startUrls'].append({'url' : url})
+        print(new_json)
+        tasks.append(apify_reddit_agent_async(new_json))
     print(new_json)
-    scraped_posts = apify_reddit_agent(new_json)
-    return scraped_posts
+    scraped_posts_array = await asyncio.gather(*tasks)
+    flattened_array = [item for array in scraped_posts_array for item in array]
+    return flattened_array
 
+
+return_values = asyncio.run(stage_4_scrape_posts( urls)) 
+print(return_values)
 
 
 

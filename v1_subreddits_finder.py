@@ -176,11 +176,11 @@ def stage_3_final(product_description) :
 
 
 ########################## TESTING CODE ########################
-test_keywords = ['vietnam', 'china', 'japan']
+# test_keywords = ['vietnam', 'china', 'japan']
 
-test_search = asyncio.run(search_for_subreddits(keywords=test_keywords))
-print(test_search)
-test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+# test_search = asyncio.run(search_for_subreddits(keywords=test_keywords))
+# print(test_search)
+# test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
 # json_test = create_json_full(product_description)
 # print(json_test)
 
