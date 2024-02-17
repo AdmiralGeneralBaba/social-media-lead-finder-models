@@ -22,11 +22,12 @@ def process_post_json(jsons) :
     return new_jsons
 
 #method to get and return embedding for the inputted text
-
-async def async_get_embedding(text, model="text-embedding-3-small") : 
+def get_embedding(text, model="text-embedding-3-small") : 
     text = text.replace("\n", " ")
-    embedding = async_client.embeddings.create(input= [text], model=model).data[0].embedding
+    embedding = client.embeddings.create(input= [text], model=model).data[0].embedding
     return embedding
+
+
 
 def query_pinecone_vector_database(index, vectors, top_k) : 
     index = pc.Index(index)
@@ -38,18 +39,15 @@ def query_pinecone_vector_database(index, vectors, top_k) :
     return query_results
 
 #Calls embedding functio nfor each of the jsons within the JSON array
-
-
-async def async_add_embedding_post_json(process_post_json) :
+def add_embedding_post_json(process_post_json) :
     print(process_post_json)
-    embeddings_array = []
-    tasks = [async_get_embedding(post_json['content']) for post_json in process_post_json]
-    embeddings_array = await asyncio.gather(*tasks)
-     
-    for post_json, embedding in zip(process_post_json, embeddings_array) : 
-        post_json['values'] = embedding
-
+    for post_json in process_post_json : 
+        post_json_embedding = get_embedding(post_json['content'])
+        print("added embedding for ")
+        post_json['values'] = post_json_embedding
     return process_post_json
+
+
 #upserts the proccessed post json with the vlaues of the vectors iwtihin it into the pinecone index database. Have this, in the future, relate to the user's ID so that everything they have scrapped is kept within the vector 
 # database as a store (or perhaps in the far futrue have it so that ALL reddit subreddits are crawled and updated on a mass scale, but that is for another time.)
 
@@ -77,11 +75,10 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     )
     return index_name
 
-
-async def async_embed_and_upsert_to_pinecone(raw_post_json, index) : 
+def embed_and_upsert_to_pinecone(raw_post_json, index) : 
     half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
-    fully_processed_json = await async_add_embedding_post_json(half_processed_post_json)
+    fully_processed_json = add_embedding_post_json(half_processed_post_json)
     print("Embeddings added! adding to pinecone...")
     pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
     print("Added to pinecone!")
