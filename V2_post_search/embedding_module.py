@@ -22,6 +22,10 @@ def process_post_json(jsons) :
     return new_jsons
 
 #method to get and return embedding for the inputted text
+def get_embedding(text, model="text-embedding-3-small") : 
+    text = text.replace("\n", " ")
+    embedding = client.embeddings.create(input= [text], model=model).data[0].embedding
+    return embedding
 
 async def async_get_embedding(text, model="text-embedding-3-small") : 
     text = text.replace("\n", " ")
@@ -38,7 +42,13 @@ def query_pinecone_vector_database(index, vectors, top_k) :
     return query_results
 
 #Calls embedding functio nfor each of the jsons within the JSON array
-
+def add_embedding_post_json(process_post_json) :
+    print(process_post_json)
+    for post_json in process_post_json : 
+        post_json_embedding = get_embedding(post_json['content'])
+        print("added embedding for ")
+        post_json['values'] = post_json_embedding
+    return process_post_json
 
 async def async_add_embedding_post_json(process_post_json) :
     print(process_post_json)
@@ -77,6 +87,14 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     )
     return index_name
 
+def embed_and_upsert_to_pinecone(raw_post_json, index) : 
+    half_processed_post_json = process_post_json(raw_post_json)
+    print("Creating embeddings...")
+    fully_processed_json = add_embedding_post_json(half_processed_post_json)
+    print("Embeddings added! adding to pinecone...")
+    pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
+    print("Added to pinecone!")
+    return pinecone_vd
 
 async def async_embed_and_upsert_to_pinecone(raw_post_json, index) : 
     half_processed_post_json = process_post_json(raw_post_json)

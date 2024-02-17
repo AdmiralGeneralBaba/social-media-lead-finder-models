@@ -53,15 +53,16 @@ Lets think step by step to get to the right answer. """
 
 
 # retruns the distinct K elements from all of the search queries
-def multiple_query_vd(queries, index) : 
+async def multiple_query_vd(queries, index) : 
     vector_queries = []
     id_set = set()
     # This queries the VD with the search terms from the LLM.
-    for query in queries : 
-        print("generated embeddings for queries...")
-        vector_queries.append(e.get_embedding(query))
+
+    vector_queries = [e.async_get_embedding(query) for query in queries]
     
-    for vector in vector_queries : 
+    vector_query_results = await asyncio.gather(*vector_queries)
+
+    for vector in vector_query_results : 
         similar_embeddings = e.query_pinecone_vector_database(index, vector, 10)
         for single_similar_embedding in similar_embeddings['matches']  : 
             if(single_similar_embedding['id'] not in id_set)  : 
