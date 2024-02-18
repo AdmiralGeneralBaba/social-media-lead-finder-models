@@ -91,7 +91,7 @@ async def evaluate_returned_k_results(problem : str, returned_k_results) :
     return evaluated_results
 
 
-
+# Returns the 
 async def v2_post_search(product_description, index) : 
    search_queries = vd_search_queries(product_description)
    returned_k_values = await multiple_query_vd(search_queries, index=index)
@@ -101,14 +101,25 @@ async def v2_post_search(product_description, index) :
    return final_leads
 
 
-test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
-test_index = "test-index"
 
-final_leads = asyncio.run(v2_post_search(test_product_description, test_index)) 
-print("these are the final leads : ")
-for i in range(len(final_leads)) :
-    print(len(final_leads))
-    print(final_leads[i]['id'])
+################################   TESTING CODE  ###############################################
+
+
+
+
+# test_product_description = """ 'My startup aims to allow users to type in the problem that their product is supposed to solve, and then from this it searches multiple social media platforms and then returns to the user the leads that have posted/commented about their problem'"""
+# test_index = "test-index"
+
+# final_leads = asyncio.run(v2_post_search(test_product_description, test_index)) 
+# print("these are the final leads : ")
+# for i in range(len(final_leads)) :
+#     print(i, """
+
+
+
+# """)
+#     print(len(final_leads))
+#     print(final_leads[i]['metadata']['content'])
  
 # test = "test"
 # print(len(test_dictionary))

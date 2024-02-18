@@ -6,6 +6,16 @@ import asyncio
 
 
 # This combines all of the other methods of the V3 reddit lead finder. Scrapes subreddits, uses GPT to analyse them, then returns the leads that match.
+# This the is JSON array output structure : 
+
+#[
+#{
+#"id" : {value}
+#"values" : {numbers}
+#"metadata" : {"username" : {username_of_user}, "content" : {content}, "url" : {url} }
+#}
+#]
+
 async def v3_reddit_lead_finder(product_description, user_id_index_name) : 
     url_array = stage_3_final(product_description=product_description)
     scraped_posts = stage_4_scrape_posts(url_array)
