@@ -94,7 +94,7 @@ async def evaluate_returned_k_results(problem : str, returned_k_results) :
 
 async def v2_post_search(product_description, index) : 
    search_queries = vd_search_queries(product_description)
-   returned_k_values = multiple_query_vd(search_queries, index=index)
+   returned_k_values = await multiple_query_vd(search_queries, index=index)
    print("Here are the number of returned k values : ", len(returned_k_values))
    final_leads =  await evaluate_returned_k_results(product_description, returned_k_values)
 

@@ -29,8 +29,9 @@ def get_embedding(text, model="text-embedding-3-small") :
 
 async def async_get_embedding(text, model="text-embedding-3-small") : 
     text = text.replace("\n", " ")
-    embedding = async_client.embeddings.create(input= [text], model=model).data[0].embedding
-    return embedding
+    embedding = await async_client.embeddings.create(input=[text], model=model)
+    embedding_return = embedding.data[0].embedding
+    return embedding_return
 
 def query_pinecone_vector_database(index, vectors, top_k) : 
     index = pc.Index(index)
