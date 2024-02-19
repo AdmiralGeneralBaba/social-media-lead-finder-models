@@ -2,6 +2,7 @@ from openai_calls import OpenAI
 import asyncio
 import json
 from reddit_scraper import apify_reddit_agent_async
+import re
 
 #global values : 
 subreddit_search_json = {
@@ -56,7 +57,7 @@ def stage_2_keyword_generation(users) :
     llm = OpenAI()
     prompt = """ based on these target customer types, Give 3 keywords for each customer type to search on reddit for relevant communities. For each user input in the JSON given, you are to add a new field called 'keywords' structured like this : 
     "keywords" : [{keyword 1}, {keyword 2}, etc]: 
-    here is the JSON you will add to : """ 
+    here is the JSON you will add to. Note. : """ 
     temp = 1 
     users_json_with_keywords = llm.open_ai_gpt4_turbo_call(users, prompt, temp)
     return users_json_with_keywords
@@ -68,7 +69,14 @@ def create_json_full(product_description) :
     keywords_addon = stage_2_keyword_generation(end_users)
     print("Here are the keywords : ", keywords_addon)
     print("Creating the JSON from the string...")
-    input_json = json.loads(keywords_addon)
+
+    def json_regex_remove(json) : 
+      pattern = r'```|json|\s*json\s*'
+      # Replace matched patterns with an empty string
+      cleaned_text = re.sub(pattern, '', json)
+      return cleaned_text
+    processed_json = json_regex_remove(keywords_addon)
+    input_json = json.loads(processed_json)
     return input_json
 
 #Stage 3, reddit api calls
@@ -180,6 +188,25 @@ async def stage_3_final(product_description) :
 
 
 
+# test_json = """```json
+# {
+#   "users": [
+#     {
+#       "user": "VFX studios looking to outsource rotoscoping work",
+#       "keywords": ["rotoscoping", "VFX outsourcing", "postproduction services"]    
+#     },
+#     {
+#       "user": "Independent filmmakers requiring professional VFX services",        
+#       "keywords": ["indie filmmaking", "VFX services", "film postproduction"]      
+#     },
+#     {
+#       "user": "Animation companies needing to supplement their in-house VFX teams",
+#       "keywords": ["animation VFX", "VFX team augmentation", "visual effects assistance"]
+#     }
+#   ]
+# }
+# ```"""
+# print(test_regex_remove(test_json))
 
 
 ########################## TESTING CODE ########################

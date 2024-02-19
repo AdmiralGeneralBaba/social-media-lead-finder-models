@@ -18,4 +18,6 @@ app.add_middleware(
 @app.get("/reddit_leads_finder") 
 async def reddit_lead_finder(product_description : str) : 
     leads = await v3_reddit_lead_finder(product_description=product_description, user_id_index_name="test-index")
+    print(leads)
     return JSONResponse(status_code=200, content=leads)
+

@@ -85,7 +85,7 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     index = pc.Index(index_name)
     vectors = []
     for json in processed_post_json :  
-        vectors.append( {"id" : json['id'], "values" : json['values'],
+        vectors.append( {"id" : json['id'],
              "metadata" : {"username" : json['username'], "content" : json['content'], "url" : json['url']}})
         
     index.upsert(
