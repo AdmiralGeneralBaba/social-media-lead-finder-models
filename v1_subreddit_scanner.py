@@ -48,8 +48,8 @@ async def stage_4_scrape_posts(subreddit_urls) :
     return flattened_array
 
 
-return_values = asyncio.run(stage_4_scrape_posts( urls)) 
-print(return_values)
+# return_values = asyncio.run(stage_4_scrape_posts( urls)) 
+# print(return_values)
 
 
 
