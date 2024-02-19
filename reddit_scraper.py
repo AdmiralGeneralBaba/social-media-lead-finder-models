@@ -1,7 +1,9 @@
 from apify_client import ApifyClient, ApifyClientAsync
 import asyncio
+import os
 # Simple module, input the JSON input of the reddit scraper via the docs here : {https://apify.com/trudax/reddit-scraper/api/client/python} and then input that into the apify_reddit_agent method to get the returned value of the scrape.
-
+APIFY_API_KEY = os.getenv("APIFY_API_KEY")
+print(APIFY_API_KEY)
 subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,

@@ -24,6 +24,6 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
     return final_leads
 
 
-# test_product_description = """ 'Our company creates viral content using AI, to create a organic following and demand, platforms like instagram and tikto' """
-# test_user_id = "test-index"
-# v3_reddit_lead_finder(test_product_description, test_user_id)
+test_product_description = """ 'Our company creates viral content using AI, to create a organic following and demand, platforms like instagram and tikto' """
+test_user_id = "test-index"
+v3_reddit_lead_finder(test_product_description, test_user_id)

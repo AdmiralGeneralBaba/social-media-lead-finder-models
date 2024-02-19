@@ -12,7 +12,7 @@ subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
     "maxComments": 0,
-    "maxCommunitiesCount": 1,
+    "maxCommunitiesCount": 10,
     "maxItems": 10,
     "maxPostCount": 300, 
     "maxUserCount": 300,
