@@ -3,7 +3,6 @@ import asyncio
 import os
 # Simple module, input the JSON input of the reddit scraper via the docs here : {https://apify.com/trudax/reddit-scraper/api/client/python} and then input that into the apify_reddit_agent method to get the returned value of the scrape.
 APIFY_API_KEY = os.getenv("APIFY_API_KEY")
-print(APIFY_API_KEY)
 subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
@@ -33,7 +32,7 @@ subreddit_search_json = {
 def apify_reddit_agent(json_input) :    
     info_array = []
     #Changed the API key here to the samuel account instead.
-    client = ApifyClient('apify_api_w727jhNXMt5mdg2rc5pfxkSBX2syyM01D6jc')
+    client = ApifyClient(APIFY_API_KEY)
 
     run_input=json_input
 
@@ -47,7 +46,7 @@ def apify_reddit_agent(json_input) :
 async def apify_reddit_agent_async(json_input) :    
     info_array = []
     #Changed the API key here to the samuel account instead.
-    client = ApifyClientAsync('apify_api_w727jhNXMt5mdg2rc5pfxkSBX2syyM01D6jc')
+    client = ApifyClientAsync(APIFY_API_KEY)
 
     run_input=json_input
 
