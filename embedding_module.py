@@ -55,6 +55,7 @@ async def async_add_embedding_post_json(process_post_json) :
     print(process_post_json)
     embeddings_array = []
     tasks = [async_get_embedding(post_json['content']) for post_json in process_post_json]
+    print("Generating embeddings for JSON content values...")
     embeddings_array = await asyncio.gather(*tasks)
      
     for post_json, embedding in zip(process_post_json, embeddings_array) : 
@@ -102,7 +103,15 @@ async def async_embed_and_upsert_to_pinecone(raw_post_json, index) :
     print("Creating embeddings...")
     fully_processed_json = await async_add_embedding_post_json(half_processed_post_json)
     print("Embeddings added! adding to pinecone...")
-    pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
+    print("This is the length of the json :", len(fully_processed_json))
+    chunk_size = 150
+    for i in range(0, len(fully_processed_json), chunk_size):
+        # Create a chunk by slicing the fully_processed_json
+        json_chunk = fully_processed_json[i:i+chunk_size]
+        
+        # Process each chunk as needed (e.g., add to Pinecone)
+        pinecone_vd = create_pinecone_index_post_json(json_chunk, index)
+        print(f"Chunk {i//chunk_size + 1} added to Pinecone!")
     print("Added to pinecone!")
     return pinecone_vd
 

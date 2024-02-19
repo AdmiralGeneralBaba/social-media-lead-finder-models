@@ -93,8 +93,8 @@ async def search_for_subreddits(keywords) :
     return new_list
 
 #Evaluator method for the pick local best stage : 
-def stage_3_evaluator_method(user, user_keyword_json) : 
-  def evaluate_local_subreddits(user_subreddits_json) :
+async def stage_3_evaluator_method(user, user_keyword_json) : 
+  async def evaluate_local_subreddits(user_subreddits_json) :
       user_description = user['user']
       llm = OpenAI()
       prompt = """Based on the subreddits given, pick all the relevent ones that relate to this end-user description. Take into account ESPECIALLY the decription of the community; IT MUST relate to the end user.: """ + f"""{user_description}""" + """you MUST output in this format and nothing else :
@@ -110,7 +110,7 @@ etc
 """
       temp = 1 
       input_json = json.dumps(user_subreddits_json)
-      chosen_urls = llm.open_ai_gpt4_turbo_call(input_json, prompt, temp)
+      chosen_urls = await llm.async_open_ai_gpt4_turbo_call(input_json, prompt, temp)
       return chosen_urls
       
   def breakdown_json(json) :
@@ -128,7 +128,7 @@ etc
 
   new_json = breakdown_json(user_keyword_json)
 
-  urls = evaluate_local_subreddits(new_json)
+  urls = await evaluate_local_subreddits(new_json)
 
   url_json = json.loads(urls)
   print(url_json)
@@ -138,14 +138,20 @@ etc
     
 # calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
 
-async def stage_3_reddit_api_calls(json) :  
-    for user in json['users'] : 
-        local_result = await search_for_subreddits(user['keywords'])
-        print("this is the scrape from the stage 3 method : ", local_result)
-        user_subreddits_json = stage_3_evaluator_method(user, local_result)
-        user.update(user_subreddits_json)
-        print(local_result)
-    return json
+async def stage_3_reddit_api_calls(json) : 
+    # Its calling three for each fo the usesrs in the json, need fto have it so that it calls them asll at once :  
+    tasks = []
+    async def search_and_evaluate(user) : 
+      local_result = await search_for_subreddits(user['keywords'])
+      print("this is the scrape from the stage 3 method : ", local_result)
+      user_subreddits_json = await stage_3_evaluator_method(user, local_result)
+      user.update(user_subreddits_json)
+      print(local_result)
+      return user
+    for user in json['users'] :
+        tasks.append(search_and_evaluate(user))
+    return_json = await asyncio.gather(*tasks)
+    return return_json
 
 def stage_3_spread_url(json) : 
     urls = []
@@ -159,7 +165,8 @@ def stage_3_spread_url(json) :
 async def stage_3_final(product_description) : 
   json = create_json_full(product_description=product_description)
   new_json = await stage_3_reddit_api_calls(json)
-  urls = stage_3_spread_url(new_json['users'])
+  print("this is the JSON value at stage_3_final : ", new_json)
+  urls = stage_3_spread_url(new_json)
   return urls
 
 
