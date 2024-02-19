@@ -3,7 +3,9 @@ import asyncio
 import openai
 import os
 
+async_client = openai.AsyncOpenAI()
 class OpenAI: 
+   
     def open_ai_gpt_call(self, user_content, prompt=None, setTemperature=None):
         try:
             # Initialize messages
@@ -146,8 +148,6 @@ class OpenAI:
         reply_content = completion.choices[0].message.content
         return reply_content  # Returning the reply_content from the function 
 
-
-
     async def async_open_ai_gpt_call(self, user_content, prompt=None, setTemperature=None):
         # Initialize messages
         messages = []
@@ -164,13 +164,13 @@ class OpenAI:
 
         # If setTemperature is provided, include it in the completion
         if setTemperature:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions(
                 model="gpt-3.5-turbo",
                 messages=messages,
                 temperature=setTemperature
             )
         else:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=messages
             )
@@ -194,13 +194,13 @@ class OpenAI:
 
         # If setTemperature is provided, include it in the completion
         if setTemperature:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-4",
                 messages=messages,
                 temperature=setTemperature
             )
         else:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-4",
                 messages=messages
             )
@@ -224,13 +224,13 @@ class OpenAI:
 
         # If setTemperature is provided, include it in the completion
         if setTemperature:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-4-1106-preview",
                 messages=messages,
                 temperature=setTemperature
             )
         else:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-4-1106-preview",
                 messages=messages
             )
@@ -254,13 +254,13 @@ class OpenAI:
 
         # If setTemperature is provided, include it in the completion
         if setTemperature:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-3.5-turbo-16k-0613",
                 messages=messages,
                 temperature=setTemperature
             )
         else:
-            completion = await openai.chat.completions.acreate(
+            completion = await async_client.chat.completions.create(
                 model="gpt-3.5-turbo-16k-0613",
                 messages=messages
             )

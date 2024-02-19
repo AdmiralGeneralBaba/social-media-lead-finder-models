@@ -1,7 +1,7 @@
 from v1_subreddits_finder import stage_3_final
 from v1_subreddit_scanner import stage_4_scrape_posts
-from V2_post_search.v2_post_search import v2_post_search
-from V2_post_search.embedding_module import async_embed_and_upsert_to_pinecone
+from v2_post_search import v2_post_search
+from embedding_module import async_embed_and_upsert_to_pinecone
 import asyncio
 
 
