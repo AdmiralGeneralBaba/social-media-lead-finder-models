@@ -13,7 +13,7 @@ subreddit_search_json = {
     "includeNSFW": True,
     "maxComments": 0,
     "maxCommunitiesCount": 1,
-    "maxItems": 10,
+    "maxItems": 150,
     "maxPostCount": 300, 
     "maxUserCount": 300,
     "proxy": {
