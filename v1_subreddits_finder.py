@@ -8,8 +8,8 @@ subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
     "maxComments": 0,
-    "maxCommunitiesCount": 10,
-    "maxItems": 10,
+    "maxCommunitiesCount": 2,
+    "maxItems": 2,
     "maxPostCount": 0,
     "maxUserCount": 0,
     "proxy": {
@@ -138,9 +138,9 @@ etc
     
 # calls three scrapes for each of the users within the JSON, and inputs the keywords as the search inputs.
 
-def stage_3_reddit_api_calls(json) :  
+async def stage_3_reddit_api_calls(json) :  
     for user in json['users'] : 
-        local_result = search_for_subreddits(user['keywords'])
+        local_result = await search_for_subreddits(user['keywords'])
         print("this is the scrape from the stage 3 method : ", local_result)
         user_subreddits_json = stage_3_evaluator_method(user, local_result)
         user.update(user_subreddits_json)
@@ -156,9 +156,9 @@ def stage_3_spread_url(json) :
 
 
 #Inputted is the product description, the search JSON is generated, then the API endpoints are called and the resutls are returned, then the JSON is formated in the correct way : 
-def stage_3_final(product_description) : 
+async def stage_3_final(product_description) : 
   json = create_json_full(product_description=product_description)
-  new_json = stage_3_reddit_api_calls(json)
+  new_json = await stage_3_reddit_api_calls(json)
   urls = stage_3_spread_url(new_json['users'])
   return urls
 
