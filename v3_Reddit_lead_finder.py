@@ -23,9 +23,9 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
     print("Generating the URL array.")
     url_array = await stage_3_final(product_description=product_description)
     print("Created the URL array...")
-    # scraped_posts = await stage_4_scrape_posts(url_array)
+    scraped_posts = await stage_4_scrape_posts(url_array)
     print("Scraped posts, added them to pinecone...")
-    await async_embed_and_upsert_to_pinecone(test_dictionary, user_id_index_name)
+    await async_embed_and_upsert_to_pinecone(scraped_posts, user_id_index_name)
     print("Searching the posts...")
     final_leads = await v2_post_search(product_description, user_id_index_name)
     return final_leads
@@ -39,7 +39,7 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
 
 
 
-test_product_description = """ 'Our company creates viral content using AI, to create a organic following and demand, platforms like instagram and tiktok' """
+test_product_description = """ 'Our company creates viral content using AI, to create a organic following and demand, platforms like instagram and tiktok. It essentailly changes the background of the video to be set in rome, or greece, its currently used in football/sports videos but can be applied to any video type.' """
 test_user_id = "test-index"
 test_output = asyncio.run(v3_reddit_lead_finder(test_product_description, test_user_id))
 

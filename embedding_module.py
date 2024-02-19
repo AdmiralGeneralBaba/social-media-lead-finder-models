@@ -16,9 +16,13 @@ def process_post_json(jsons) :
     new_jsons = []
 
     for json in jsons : 
-        content = json['title'] + " " + json['body']
-        new_json = {'id' : json['id'], 'content' : content, 'username' : json['username'], 'url' : json['url']}
-        new_jsons.append(new_json)
+        try : 
+            content = json['title'] + " " + json['body']
+            new_json = {'id' : json['id'], 'content' : content, 'username' : json['username'], 'url' : json['url']}
+            new_jsons.append(new_json)
+        except Exception as e : 
+            print(e)
+   
     return new_jsons
 
 #method to get and return embedding for the inputted text
