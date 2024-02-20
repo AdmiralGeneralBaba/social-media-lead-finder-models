@@ -20,14 +20,14 @@ import asyncio
 
 #await this endpoint.
 async def v3_reddit_lead_finder(product_description, user_id_index_name) : 
-    # print("Starting lead finder...")
-    # print("Generating the URL array.")
-    # url_array = await stage_3_final(product_description=product_description)
-    # print("Created the URL array...")
-    # scraped_posts = await stage_4_scrape_posts(url_array)
-    # print("Scraped posts, added them to pinecone...")
-    # await async_embed_and_upsert_to_pinecone(scraped_posts, user_id_index_name)
-    # print("Searching the posts...")
+    print("Starting lead finder...")
+    print("Generating the URL array.")
+    url_array = await stage_3_final(product_description=product_description)
+    print("Created the URL array...")
+    scraped_posts = await stage_4_scrape_posts(url_array)
+    print("Scraped posts, added them to pinecone...")
+    await async_embed_and_upsert_to_pinecone(scraped_posts, user_id_index_name)
+    print("Searching the posts...")
     final_leads = await v2_post_search(product_description, user_id_index_name)
     return final_leads
 

@@ -78,6 +78,7 @@ async def multiple_query_vd(queries, index) :
                 "values" : k_result["values"],
                 "metadata" : {"username" : k_result["metadata"]["username"], "content" : k_result["metadata"]["content"], "url" : k_result["metadata"]["url"]}}
             dictionary_returned_k_results.append(k_result_dictionary)
+        return dictionary_returned_k_results
 
     final_returned_k_results = change_vector_class_to_dictionary(returned_k_results)
     #Returns a list of the top K results for all of the queries types that are a distinct type
@@ -102,19 +103,20 @@ async def evaluate_returned_k_results(problem : str, returned_k_results) :
 
 # Returns the 
 async def v2_post_search(product_description, index) : 
-   search_queries = vd_search_queries(product_description)
-   # The return value of 'multiple_query_vd' is a array of these ?: <class 'pinecone.core.client.model.vector.Vector'>
-   returned_k_values = await multiple_query_vd(search_queries, index=index)
-   print("Here are the number of returned k values : ", len(returned_k_values))
-   final_leads =  await evaluate_returned_k_results(product_description, returned_k_values)
-   for lead in final_leads:
-    print(lead['id'])
-    print(lead['metadata'])
-    print(type(lead))  # Just for debugging
-    if 'values' in lead:
-        del lead['values']
+    search_queries = vd_search_queries(product_description)
+    # The return value of 'multiple_query_vd' is a array of these ?: <class 'pinecone.core.client.model.vector.Vector'>
+    returned_k_values = await multiple_query_vd(search_queries, index=index)
+    print("Here are the number of returned k values : ", len(returned_k_values))
+    final_leads =  await evaluate_returned_k_results(product_description, returned_k_values)
+    #Delete the values (embedding numbers) for the JSON, so its easier to pass. Delete this code 
+    def delete_embedding_values(final_leads) : 
+        for lead in final_leads:
+            if 'values' in lead:
+                    del lead['values']
+        return final_leads
+    output_leads = delete_embedding_values(final_leads)
 
-   return final_leads
+    return output_leads
 
 
 
@@ -138,7 +140,7 @@ async def v2_post_search(product_description, index) :
 #     print(final_leads[i]['metadata']['content'])
  
 # test = "test"
-# print(len(test_dictionary))
+# print(len(test_dictionary)) 
 # vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
 # print(vector_database)
 
