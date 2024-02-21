@@ -1,6 +1,7 @@
 from openai import OpenAI, AsyncOpenAI
 from pinecone import Pinecone, ServerlessSpec
 import asyncio
+import math
 
 
 pc = Pinecone(api_key='b726d64c-a756-4aca-a368-a5b31f1f76a6')
@@ -33,6 +34,9 @@ def get_embedding(text, model="text-embedding-3-small") :
 
 async def async_get_embedding(text, model="text-embedding-3-small") : 
     text = text.replace("\n", " ")
+    estimated_token_limit = 5800
+    if len(text) > estimated_token_limit: 
+        text = text[:estimated_token_limit]
     embedding = await async_client.embeddings.create(input=[text], model=model)
     embedding_return = embedding.data[0].embedding
     return embedding_return

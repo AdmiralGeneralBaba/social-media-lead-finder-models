@@ -33,7 +33,7 @@ subreddit_search_json = {
 }
 
 
-async def apify_reddit_agent(json_input, wait_time : int) :    
+async def apify_reddit_agent_async(json_input, wait_time : int) :    
     async def call_scrape_request() : 
         url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token={APIFY_API_KEY}"
         async with aiohttp.ClientSession() as session : 
@@ -51,7 +51,6 @@ async def apify_reddit_agent(json_input, wait_time : int) :
                 await asyncio.sleep(wait_time)
                 async with session.get(url) as response: 
                     json_return = await response.json()
-                    print(json_return)
                     return json_return
     json_output = await get_json_information(run_info['data']['defaultDatasetId'])
     return json_output
