@@ -7,8 +7,8 @@ subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
     "maxComments": 5,
-    "maxCommunitiesCount": 1,
-    "maxItems": 5,
+    "maxCommunitiesCount": 2,
+    "maxItems": 2,
     "maxPostCount": 5,
     "maxUserCount": 5,
     "proxy": {
@@ -57,7 +57,14 @@ async def apify_reddit_agent_async(json_input) :
         info_array.append(item)
     return info_array 
 
-    # test = apify_reddit_agent_async(subreddit_search_json)
 
-    # test_result = asyncio.run(test)
-    # print(test_result)
+
+
+# test = apify_reddit_agent_async(subreddit_search_json)
+
+
+# test_result = asyncio.run(test)
+# print(test_result)
+
+# test2 = apify_reddit_agent(subreddit_search_json)
+# print(test2)
