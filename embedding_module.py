@@ -11,20 +11,7 @@ pc = Pinecone(api_key='b726d64c-a756-4aca-a368-a5b31f1f76a6')
 client = OpenAI()
 async_client = AsyncOpenAI()
 test = [{'id': 't3_1aloclp', 'parsedId': '1aloclp', 'url': 'https://www.reddit.com/r/digital_marketing/comments/1aloclp/tips_for_marketing_of_new_podcast/', 'username': 'LuckyFall6205', 'title': 'Tips for Marketing of New Podcast', 'communityName': 'r/digital_marketing', 'parsedCommunityName': 'digital_marketing', 'body': "I met a senior journalist at a B2B meeting, introduced by my dad. He's a script writer and content creator for documentaries, aged 62, seeking advice on better podcast marketing. \n\nI suggested using Spotify Advertising Manager, Google Ads, Meta Ads, etc. \n\nDespite being new to podcast marketing and more focused on content design and media buying, I felt a bit out of my element. Any additional tips would be appreciated!\n\nThe topic of podcast is [The focus on issues relevant to people's lives and society as a whole]", 'html': '&lt;!-- SC_OFF --&gt;&lt;div class="md"&gt;&lt;p&gt;I met a senior journalist at a B2B meeting, introduced by my dad. He&amp;#39;s a script writer and content creator for documentaries, aged 62, seeking advice on better podcast marketing. &lt;/p&gt;\n\n&lt;p&gt;I suggested using Spotify Advertising Manager, Google Ads, Meta Ads, etc. &lt;/p&gt;\n\n&lt;p&gt;Despite being new to podcast marketing and more focused on content design and media buying, I felt a bit out of my element. Any additional tips would be appreciated!&lt;/p&gt;\n\n&lt;p&gt;The topic of podcast is [The focus on issues relevant to people&amp;#39;s lives and society as a whole]&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;', 'numberOfComments': 2, 'flair': 'Discussion', 'upVotes': 0, 'isVideo': False, 'isAd': False, 'over18': False, 'createdAt': '2024-02-08T05:29:48.000Z', 'scrapedAt': '2024-02-12T20:40:28.124Z', 'dataType': 'post'}]
-  
-# This includes only ythe needed values in the new JSON to make it less confusing 
-def process_post_json(jsons) : 
-    new_jsons = []
 
-    for json in jsons : 
-        try : 
-            content = json['title'] + " " + json['body']
-            new_json = {'id' : json['id'], 'content' : content, 'username' : json['username'], 'url' : json['url']}
-            new_jsons.append(new_json)
-        except Exception as e : 
-            print(e)
-   
-    return new_jsons
 
 #method to get and return embedding for the inputted text
 def get_embedding(text, model="text-embedding-3-small") : 
@@ -48,7 +35,7 @@ def query_pinecone_vector_database(index, vectors, top_k) :
         top_k=top_k,
         include_values=False
     )   
-    return query_results
+    return query_results 
 
 #Calls embedding functio nfor each of the jsons within the JSON array
 def add_embedding_post_json(process_post_json) :
@@ -89,8 +76,27 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     index = pc.Index(index_name)
     vectors = []
     for json in processed_post_json :  
-        vectors.append( {"id" : json['id'], "values" : json['values'],
-             "metadata" : {"username" : json['username'], "content" : json['content'], "url" : json['url']}})
+        #Adds in all of the information relating to the post to the pinecone database, within the metadata : 
+        vectors.append({
+                "id": json['id'],
+                "values": json['values'],
+                "metadata": {
+                    "username": json['username'],
+                    "userId": json['userId'],
+                    "url": json['url'],
+                    "content": json['content'],
+                    "communityName": json['communityName'],
+                    "parsedCommunityName": json['parsedCommunityName'],
+                    "numberOfComments": json['numberOfComments'],
+                    "upVotes": json['upVotes'],
+                    "isVideo": json['isVideo'],
+                    "isAd": json['isAd'],
+                    "over18": json['over18'],
+                    "createdAt": json['createdAt'],
+                    "scrapedAt": json['scrapedAt'],
+                    "dataType": json['dataType']
+                }
+                })
         
     index.upsert(
         vectors=vectors
@@ -98,18 +104,18 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     return index_name
 
 def embed_and_upsert_to_pinecone(raw_post_json, index) : 
-    half_processed_post_json = process_post_json(raw_post_json)
+    # half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
-    fully_processed_json = add_embedding_post_json(half_processed_post_json)
+    fully_processed_json = add_embedding_post_json(raw_post_json)
     print("Embeddings added! adding to pinecone...")
     pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
     print("Added to pinecone!")
     return pinecone_vd
 
 async def async_embed_and_upsert_to_pinecone(raw_post_json, index) : 
-    half_processed_post_json = process_post_json(raw_post_json)
+    # half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
-    fully_processed_json = await async_add_embedding_post_json(half_processed_post_json)
+    fully_processed_json = await async_add_embedding_post_json(raw_post_json)
     print("Embeddings added! adding to pinecone...")
     print("This is the length of the json :", len(fully_processed_json))
     chunk_size = 150
@@ -134,12 +140,57 @@ def query_fetch_id_information(id_set, index) :
     return id_information
 
 # embed_and_upsert_to_pinecone(test_dictionary)
-# input_vectors = get_embedding("struggling to advertise properly")
-# print(query_pinecone_vector_database("test-index", input_vectors, 5))
+# input_vectors = get_embedding("""My Jet rental business is made up of 2 bombardier challenger 601-3A which we rent at £5000 per hour and 4 hawker 900xp rented at £6400 or the country's currency equivalent like I think it's over 7k euros in Spai.  my customers are people who wish to travel in style and comfort and without the hassles of regular commercial air travel 
+# Usually top business execs and popular celebrities""")
+# print(query_pinecone_vector_database("test-index", input_vectors, 15))
 
 
 # test_index = "test-index"
 
 # index = pc.Index(test_index)
 
+test_json = [{
+  "id": "t3_1ave16e",
+  "parsedId": "1ave16e",
+  "url": "https://www.reddit.com/r/LuxuryTravel/comments/1ave16e/luxury_accommodation_scams_how_to_detect_them/",
+  "username": "ah_blogs",
+  "userId": "t2_u5ojcq4i",
+  "content": "Luxury accommodation scams: how to detect them before booking online - travel tips - expert traveller",
+  "communityName": "r/LuxuryTravel",
+  "parsedCommunityName": "LuxuryTravel",
+  "body": "URL: https://airportsandhotelsblog.wordpress.com/2023/11/13/accommodation-scams-how-to-detect-them-before-booking-online/\n",
+  "html": None,
+  "numberOfComments": 0,
+  "flair": None,
+  "upVotes": 1,
+  "isVideo": False,
+  "isAd": False,
+  "over18": False,
+  "createdAt": "2024-02-20T09:55:12.000Z",
+  "scrapedAt": "2024-02-22T12:55:11.069Z",
+  "dataType": "post"
+},
+{
+  "id": "t3_1av72nv",
+  "parsedId": "1av72nv",
+  "url": "https://www.reddit.com/r/LuxuryTravel/comments/1av72nv/share_your_blissful_moments_at_sapphire_shores/",
+  "username": "cC_cReation_HouSe",
+  "userId": "t2_l159g6ha",
+  "content": "Share Your Blissful Moments at Sapphire Shores Luxury Retreat in Destin, FL! 🏝️✨",
+  "communityName": "r/LuxuryTravel",
+  "parsedCommunityName": "LuxuryTravel",
+  "body": "URL: https://mirageproperties.com/\n",
+  "html": None,
+  "numberOfComments": 0,
+  "flair": None,
+  "upVotes": 1,
+  "isVideo": False,
+  "isAd": False,
+  "over18": False,
+  "createdAt": "2024-02-20T03:00:56.000Z",
+  "scrapedAt": "2024-02-22T12:55:11.283Z",
+  "dataType": "post"
+}]
+
+asyncio.run(async_embed_and_upsert_to_pinecone(test_json, index='test-index'))
 # id_list = ['t3_1aq38xe', 't3_1aqlq57','t3_1ard7c5']

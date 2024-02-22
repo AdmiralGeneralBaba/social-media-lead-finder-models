@@ -70,13 +70,14 @@ async def multiple_query_vd(queries, index) :
                 id_set.add(single_similar_embedding['id'])
     print("fetching id information...")
     returned_k_results = e.query_fetch_id_information(id_set, index)
-
+    # This method is here because for some fucked up reason, pinecone returns a class of vector that is a JSON but it is not recognised as one, so this changes it into a dictionary to be turned into a JSON: 
+    # Change the output values s you wish; database documents contain allthe information fo the embedding.
     def change_vector_class_to_dictionary(returned_k_results) : 
         dictionary_returned_k_results = []
         for k_result in returned_k_results : 
             k_result_dictionary = {"id" : k_result["id"],
                 "values" : k_result["values"],
-                "metadata" : {"username" : k_result["metadata"]["username"], "content" : k_result["metadata"]["content"], "url" : k_result["metadata"]["url"]}}
+                "metadata" : {"username" : k_result["metadata"]["username"], "content" : k_result["metadata"]["content"], "url" : k_result["metadata"]["url"], "createdAt" : k_result["metadata"]["createdAt"]}}
             dictionary_returned_k_results.append(k_result_dictionary)
         return dictionary_returned_k_results
 
@@ -98,7 +99,7 @@ async def evaluate_returned_k_results(problem : str, returned_k_results) :
         if result == True :
             evaluated_results.append(k_result)
     
-    return evaluated_results
+    return evaluated_results, returned_k_results
 
 
 # Returns the 
@@ -114,9 +115,10 @@ async def v2_post_search(product_description, index) :
             if 'values' in lead:
                     del lead['values']
         return final_leads
-    output_leads = delete_embedding_values(final_leads)
-
-    return output_leads
+    evaluated_output_leads = delete_embedding_values(final_leads[0])
+    non_evaluated_output_leads = delete_embedding_values(final_leads[1])
+    final_object = {'non_evaluated_leads' : non_evaluated_output_leads, 'evaluated_leads' : evaluated_output_leads }
+    return final_object
 
 
 
@@ -143,7 +145,6 @@ async def v2_post_search(product_description, index) :
 # print(len(test_dictionary)) 
 # vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
 # print(vector_database)
-
 # id_set = ['t3_1aq38xe']
 # test = e.query_fetch_id_information(id_set, 'test-index')
 # print(test)

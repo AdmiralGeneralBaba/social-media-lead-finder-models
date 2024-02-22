@@ -92,7 +92,7 @@ async def search_for_subreddits(keywords) :
       new_json["searches"] = single_keyword_array
       print(new_json)
       # Loads up the caroutines for the apify reddit scraping
-      info = apify_reddit_agent_async(json_input=new_json, wait_time=45)
+      info = apify_reddit_agent_async(json_input=new_json, wait_time=30)
       tasks.append(info)
     # Flatten the array (as the apify agent returns a array, adn then this is made into a array of arrays)#
     print(tasks)
