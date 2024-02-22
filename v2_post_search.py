@@ -4,7 +4,7 @@ from openai_calls import OpenAI
 import asyncio
 import re
 import json
-
+import v1_evaluator_post
 
 
 def vd_search_queries(problem) : 
@@ -89,10 +89,9 @@ async def multiple_query_vd(queries, index) :
 # Evaluates each of the k results and returns the one that gave back true.
 async def evaluate_returned_k_results(problem : str, returned_k_results) : 
     evaluated_results = []
-    evaluation_tasks = []
     print("Evaluating post leads...")
-    for k_result in returned_k_results : 
-        evaluation_tasks.append(post_evaluation(problem, k_result['metadata']['content']))
+    
+    evaluation_tasks = v1_evaluator_post.v1_evaluator_post(problem, returned_k_results=returned_k_results)
     evaluation_returned = await asyncio.gather(*evaluation_tasks)
 
     for k_result, result in zip(returned_k_results, evaluation_returned)  : 
