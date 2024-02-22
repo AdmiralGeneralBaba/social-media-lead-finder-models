@@ -12,7 +12,7 @@ subreddit_search_json = {
     "includeNSFW": True,
     "maxComments": 5,
     "maxCommunitiesCount": 2,
-    "maxItems": 50,
+    "maxItems": 2,
     "maxPostCount": 5,
     "maxUserCount": 5,
     "proxy": {
@@ -33,9 +33,9 @@ subreddit_search_json = {
 }
 
 
-async def apify_reddit_agent_async(json_input, wait_time : int) :    
+async def apify_reddit_agent_async_lite(json_input, wait_time : int) :    
     async def call_scrape_request() : 
-        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token={APIFY_API_KEY}"
+        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token={APIFY_API_KEY}&memory=2048"
         async with aiohttp.ClientSession() as session : 
             async with session.post(url, json=json_input) as response : 
                 return await response.json()
@@ -46,7 +46,7 @@ async def apify_reddit_agent_async(json_input, wait_time : int) :
         async with aiohttp.ClientSession() as session : 
             while max_atempts >= attempt : 
                 attempt += 1
-                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token=apify_api_fKZ25ERj0eKmcONf6XJtjoGbrLbL7s1WrYyh"
+                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=2048"
                 print("waiting for data...")
                 await asyncio.sleep(wait_time)
                 async with session.get(url) as response: 
@@ -55,7 +55,27 @@ async def apify_reddit_agent_async(json_input, wait_time : int) :
     json_output = await get_json_information(run_info['data']['defaultDatasetId'])
     return json_output
     
-
+async def apify_reddit_agent_async(json_input, wait_time : int) :    
+    async def call_scrape_request() : 
+        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper/runs?token={APIFY_API_KEY}&memory=2048"
+        async with aiohttp.ClientSession() as session : 
+            async with session.post(url, json=json_input) as response : 
+                return await response.json()
+    run_info = await call_scrape_request()
+    async def get_json_information(defaultDatasetId) :
+        max_atempts = 5 
+        attempt = 0
+        async with aiohttp.ClientSession() as session : 
+            while max_atempts >= attempt : 
+                attempt += 1
+                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=2048"
+                print("waiting for data...")
+                await asyncio.sleep(wait_time)
+                async with session.get(url) as response: 
+                    json_return = await response.json()
+                    return json_return
+    json_output = await get_json_information(run_info['data']['defaultDatasetId'])
+    return json_output
 # test = asyncio.run(apify_reddit_agent(subreddit_search_json, wait_time=60))
 # print(test)
 # test = apify_reddit_agent_async(subreddit_search_json)
