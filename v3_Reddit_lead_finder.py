@@ -40,9 +40,9 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
 
 
 
-test_product_description = """ 'Our company automates VFX rotoscoping jobs and completes it to a professional standard. we are essentilly a rotoscoping contractor' """
-test_user_id = "test-index"
-test_output = asyncio.run(v3_reddit_lead_finder(test_product_description, test_user_id))
+# test_product_description = """ 'Our company automates VFX rotoscoping jobs and completes it to a professional standard. we are essentilly a rotoscoping contractor' """
+# test_user_id = "test-index"
+# test_output = asyncio.run(v3_reddit_lead_finder(test_product_description, test_user_id))
 # print(test_output[0])
 # for i in range(len(test_output)) : 
 #     print(test_output[i]['metadata']['content']
