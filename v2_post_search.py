@@ -114,6 +114,7 @@ async def v2_post_search(product_description, index) :
                     del lead['values']
         return final_leads
     evaluated_output_leads = delete_embedding_values(final_leads[0])
+    print("This is the number of evaluated leads : ", len(evaluated_output_leads))
     non_evaluated_output_leads = delete_embedding_values(final_leads[1])
     final_object = {'non_evaluated_leads' : non_evaluated_output_leads, 'evaluated_leads' : evaluated_output_leads }
     return final_object

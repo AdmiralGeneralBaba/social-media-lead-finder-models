@@ -35,7 +35,7 @@ subreddit_search_json = {
 
 async def apify_reddit_agent_async_lite(json_input, wait_time : int) :    
     async def call_scrape_request() : 
-        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token={APIFY_API_KEY}&memory=2048"
+        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token={APIFY_API_KEY}&memory=1024"
         async with aiohttp.ClientSession() as session : 
             async with session.post(url, json=json_input) as response : 
                 return await response.json()
@@ -46,7 +46,7 @@ async def apify_reddit_agent_async_lite(json_input, wait_time : int) :
         async with aiohttp.ClientSession() as session : 
             while max_atempts >= attempt : 
                 attempt += 1
-                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=2048"
+                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=1024"
                 print("waiting for data...")
                 await asyncio.sleep(wait_time)
                 async with session.get(url) as response: 
@@ -57,7 +57,7 @@ async def apify_reddit_agent_async_lite(json_input, wait_time : int) :
     
 async def apify_reddit_agent_async(json_input, wait_time : int) :    
     async def call_scrape_request() : 
-        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper/runs?token={APIFY_API_KEY}&memory=2048"
+        url = f"https://api.apify.com/v2/acts/trudax~reddit-scraper/runs?token={APIFY_API_KEY}&memory=1024"
         async with aiohttp.ClientSession() as session : 
             async with session.post(url, json=json_input) as response : 
                 return await response.json()
@@ -68,7 +68,7 @@ async def apify_reddit_agent_async(json_input, wait_time : int) :
         async with aiohttp.ClientSession() as session : 
             while max_atempts >= attempt : 
                 attempt += 1
-                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=2048"
+                url = f"https://api.apify.com/v2/datasets/{defaultDatasetId}/items?token={APIFY_API_KEY}&memory=1024"
                 print("waiting for data...")
                 await asyncio.sleep(wait_time)
                 async with session.get(url) as response: 

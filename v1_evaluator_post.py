@@ -7,6 +7,9 @@ import re
 
 
 ######### THESE ARE THE LLM EVAL CALLS  : #######
+
+
+# Each one of these evaluates the post. Change the prompt for each category to change the evaluation strictness.
 async def category_1_post_evaluation(problem, content) : 
     llm = OpenAI()
     prompt = """   You are an expert lead validator, who has decades of experience in being able to identify whether or not a lead has potential interest in a company.
@@ -17,11 +20,11 @@ Your job is evaluate this post, and make a decision on whether or not it is a po
 
 When you have made up your mind, type either 'YES' or 'NO' at the end. 
 
-Here is the problem the company is solving : + """ + f"{problem}" + """
+Here is the problem the company is solving : + """ + f"{problem}" + """w
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. """
+Lets think step by step to get to the right answer. Also, but VERY LENIANT with your judgement; this lead is very warm, so if there is a slight chance that this would be a potential lead, accept it (unless it is spam/an advertisement, etc). This lead has posted this within the last 5 days. """
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
@@ -43,7 +46,7 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. """
+Lets think step by step to get to the right answer. In your judgement, be leniant. This lead is warm, and has posted this within the last 30 days """
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
@@ -65,7 +68,7 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. """
+Lets think step by step to get to the right answer. This lead has posted in the last 30 - 180 days, so be relatively leniant in your judgement."""
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
@@ -87,7 +90,7 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. """
+Lets think step by step to get to the right answer. This lead posted this at least 180 days ago, so unless they are very relevent, dont include them."""
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
