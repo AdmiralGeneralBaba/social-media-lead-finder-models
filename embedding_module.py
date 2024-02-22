@@ -12,6 +12,11 @@ client = OpenAI()
 async_client = AsyncOpenAI()
 test = [{'id': 't3_1aloclp', 'parsedId': '1aloclp', 'url': 'https://www.reddit.com/r/digital_marketing/comments/1aloclp/tips_for_marketing_of_new_podcast/', 'username': 'LuckyFall6205', 'title': 'Tips for Marketing of New Podcast', 'communityName': 'r/digital_marketing', 'parsedCommunityName': 'digital_marketing', 'body': "I met a senior journalist at a B2B meeting, introduced by my dad. He's a script writer and content creator for documentaries, aged 62, seeking advice on better podcast marketing. \n\nI suggested using Spotify Advertising Manager, Google Ads, Meta Ads, etc. \n\nDespite being new to podcast marketing and more focused on content design and media buying, I felt a bit out of my element. Any additional tips would be appreciated!\n\nThe topic of podcast is [The focus on issues relevant to people's lives and society as a whole]", 'html': '&lt;!-- SC_OFF --&gt;&lt;div class="md"&gt;&lt;p&gt;I met a senior journalist at a B2B meeting, introduced by my dad. He&amp;#39;s a script writer and content creator for documentaries, aged 62, seeking advice on better podcast marketing. &lt;/p&gt;\n\n&lt;p&gt;I suggested using Spotify Advertising Manager, Google Ads, Meta Ads, etc. &lt;/p&gt;\n\n&lt;p&gt;Despite being new to podcast marketing and more focused on content design and media buying, I felt a bit out of my element. Any additional tips would be appreciated!&lt;/p&gt;\n\n&lt;p&gt;The topic of podcast is [The focus on issues relevant to people&amp;#39;s lives and society as a whole]&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;', 'numberOfComments': 2, 'flair': 'Discussion', 'upVotes': 0, 'isVideo': False, 'isAd': False, 'over18': False, 'createdAt': '2024-02-08T05:29:48.000Z', 'scrapedAt': '2024-02-12T20:40:28.124Z', 'dataType': 'post'}]
 
+def process_post_json(jsons) : 
+    for json in jsons : 
+        json['content'] = json['title'] + " " + json['body']
+    return jsons
+
 
 #method to get and return embedding for the inputted text
 def get_embedding(text, model="text-embedding-3-small") : 
@@ -82,7 +87,6 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
                 "values": json['values'],
                 "metadata": {
                     "username": json['username'],
-                    "userId": json['userId'],
                     "url": json['url'],
                     "content": json['content'],
                     "communityName": json['communityName'],
@@ -104,18 +108,18 @@ def create_pinecone_index_post_json(processed_post_json, index_name) :
     return index_name
 
 def embed_and_upsert_to_pinecone(raw_post_json, index) : 
-    # half_processed_post_json = process_post_json(raw_post_json)
+    half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
-    fully_processed_json = add_embedding_post_json(raw_post_json)
+    fully_processed_json = add_embedding_post_json(half_processed_post_json)
     print("Embeddings added! adding to pinecone...")
     pinecone_vd = create_pinecone_index_post_json(fully_processed_json, index)
     print("Added to pinecone!")
     return pinecone_vd
 
 async def async_embed_and_upsert_to_pinecone(raw_post_json, index) : 
-    # half_processed_post_json = process_post_json(raw_post_json)
+    half_processed_post_json = process_post_json(raw_post_json)
     print("Creating embeddings...")
-    fully_processed_json = await async_add_embedding_post_json(raw_post_json)
+    fully_processed_json = await async_add_embedding_post_json(half_processed_post_json)
     print("Embeddings added! adding to pinecone...")
     print("This is the length of the json :", len(fully_processed_json))
     chunk_size = 150
@@ -149,48 +153,48 @@ def query_fetch_id_information(id_set, index) :
 
 # index = pc.Index(test_index)
 
-test_json = [{
-  "id": "t3_1ave16e",
-  "parsedId": "1ave16e",
-  "url": "https://www.reddit.com/r/LuxuryTravel/comments/1ave16e/luxury_accommodation_scams_how_to_detect_them/",
-  "username": "ah_blogs",
-  "userId": "t2_u5ojcq4i",
-  "content": "Luxury accommodation scams: how to detect them before booking online - travel tips - expert traveller",
-  "communityName": "r/LuxuryTravel",
-  "parsedCommunityName": "LuxuryTravel",
-  "body": "URL: https://airportsandhotelsblog.wordpress.com/2023/11/13/accommodation-scams-how-to-detect-them-before-booking-online/\n",
-  "html": None,
-  "numberOfComments": 0,
-  "flair": None,
-  "upVotes": 1,
-  "isVideo": False,
-  "isAd": False,
-  "over18": False,
-  "createdAt": "2024-02-20T09:55:12.000Z",
-  "scrapedAt": "2024-02-22T12:55:11.069Z",
-  "dataType": "post"
-},
-{
-  "id": "t3_1av72nv",
-  "parsedId": "1av72nv",
-  "url": "https://www.reddit.com/r/LuxuryTravel/comments/1av72nv/share_your_blissful_moments_at_sapphire_shores/",
-  "username": "cC_cReation_HouSe",
-  "userId": "t2_l159g6ha",
-  "content": "Share Your Blissful Moments at Sapphire Shores Luxury Retreat in Destin, FL! 🏝️✨",
-  "communityName": "r/LuxuryTravel",
-  "parsedCommunityName": "LuxuryTravel",
-  "body": "URL: https://mirageproperties.com/\n",
-  "html": None,
-  "numberOfComments": 0,
-  "flair": None,
-  "upVotes": 1,
-  "isVideo": False,
-  "isAd": False,
-  "over18": False,
-  "createdAt": "2024-02-20T03:00:56.000Z",
-  "scrapedAt": "2024-02-22T12:55:11.283Z",
-  "dataType": "post"
-}]
+# test_json = [{
+#   "id": "t3_1ave16e",
+#   "parsedId": "1ave16e",
+#   "url": "https://www.reddit.com/r/LuxuryTravel/comments/1ave16e/luxury_accommodation_scams_how_to_detect_them/",
+#   "username": "ah_blogs",
+#   "userId": "t2_u5ojcq4i",
+#   "content": "Luxury accommodation scams: how to detect them before booking online - travel tips - expert traveller",
+#   "communityName": "r/LuxuryTravel",
+#   "parsedCommunityName": "LuxuryTravel",
+#   "body": "URL: https://airportsandhotelsblog.wordpress.com/2023/11/13/accommodation-scams-how-to-detect-them-before-booking-online/\n",
+#   "html": None,
+#   "numberOfComments": 0,
+#   "flair": None,
+#   "upVotes": 1,
+#   "isVideo": False,
+#   "isAd": False,
+#   "over18": False,
+#   "createdAt": "2024-02-20T09:55:12.000Z",
+#   "scrapedAt": "2024-02-22T12:55:11.069Z",
+#   "dataType": "post"
+# },
+# {
+#   "id": "t3_1av72nv",
+#   "parsedId": "1av72nv",
+#   "url": "https://www.reddit.com/r/LuxuryTravel/comments/1av72nv/share_your_blissful_moments_at_sapphire_shores/",
+#   "username": "cC_cReation_HouSe",
+#   "userId": "t2_l159g6ha",
+#   "content": "Share Your Blissful Moments at Sapphire Shores Luxury Retreat in Destin, FL! 🏝️✨",
+#   "communityName": "r/LuxuryTravel",
+#   "parsedCommunityName": "LuxuryTravel",
+#   "body": "URL: https://mirageproperties.com/\n",
+#   "html": None,
+#   "numberOfComments": 0,
+#   "flair": None,
+#   "upVotes": 1,
+#   "isVideo": False,
+#   "isAd": False,
+#   "over18": False,
+#   "createdAt": "2024-02-20T03:00:56.000Z",
+#   "scrapedAt": "2024-02-22T12:55:11.283Z",
+#   "dataType": "post"
+# }]
 
-asyncio.run(async_embed_and_upsert_to_pinecone(test_json, index='test-index'))
+# asyncio.run(async_embed_and_upsert_to_pinecone(test_json, index='test-index'))
 # id_list = ['t3_1aq38xe', 't3_1aqlq57','t3_1ard7c5']
