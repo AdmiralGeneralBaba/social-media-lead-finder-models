@@ -112,7 +112,7 @@ def organise_k_results( combined_retrieved_posts) :
     category_3 = []
     category_4 = []
     for post in combined_retrieved_posts : 
-        post_time_difference = calculate_time_difference(post['createdAt'])
+        post_time_difference = calculate_time_difference(post['metadata']['createdAt'])
         if post_time_difference <= 5 :
             category_1.append(post)
         elif 5 < post_time_difference <= 30 : 

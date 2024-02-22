@@ -90,7 +90,6 @@ async def multiple_query_vd(queries, index) :
 async def evaluate_returned_k_results(problem : str, returned_k_results) : 
     evaluated_results = []
     print("Evaluating post leads...")
-    
     evaluation_tasks = v1_evaluator_post.v1_evaluator_post(problem, returned_k_results=returned_k_results)
     evaluation_returned = await asyncio.gather(*evaluation_tasks)
 
