@@ -4,7 +4,7 @@ from openai_calls import OpenAI
 import asyncio
 import re
 import json
-import v1_evaluator_post
+
 
 
 def vd_search_queries(problem) : 
@@ -13,7 +13,7 @@ def vd_search_queries(problem) :
     prompt = """ Given to you will be a problem that a company solves. Your job is to give different ways of saying this problem, such that the semantic meaning is the same but it explores different search spaces in the context of retrieving the maximum amount of relevant results from a search.
 Your search queries should go broader and more creative in their solution space, such that the final value you give in the array should be a search term that goes just on the edge of being an irrelevant search.
 Think deeply about what the problem might link to, and then perform that search. For example, if the solution is about having fisherman catch more fish with a better hook, the last search term should be a broad problem about catching more fish in general.
-The first 10 should be direct, the middle 10 should be roughly direct and the last 10 should be indirect.
+The first 3 should be direct, the middle 3 should be roughly direct and the last 4 should be indirect.
 
 In your output, you should ONLY give an array of text values. For example : 
 [{search1here} {serach2here} etc]
@@ -70,14 +70,13 @@ async def multiple_query_vd(queries, index) :
                 id_set.add(single_similar_embedding['id'])
     print("fetching id information...")
     returned_k_results = e.query_fetch_id_information(id_set, index)
-    # This method is here because for some fucked up reason, pinecone returns a class of vector that is a JSON but it is not recognised as one, so this changes it into a dictionary to be turned into a JSON: 
-    # Change the output values s you wish; database documents contain allthe information fo the embedding.
+
     def change_vector_class_to_dictionary(returned_k_results) : 
         dictionary_returned_k_results = []
         for k_result in returned_k_results : 
             k_result_dictionary = {"id" : k_result["id"],
                 "values" : k_result["values"],
-                "metadata" : {"username" : k_result["metadata"]["username"], "content" : k_result["metadata"]["content"], "url" : k_result["metadata"]["url"], "createdAt" : k_result["metadata"]["createdAt"]}}
+                "metadata" : {"username" : k_result["metadata"]["username"], "content" : k_result["metadata"]["content"], "url" : k_result["metadata"]["url"]}}
             dictionary_returned_k_results.append(k_result_dictionary)
         return dictionary_returned_k_results
 
@@ -89,15 +88,17 @@ async def multiple_query_vd(queries, index) :
 # Evaluates each of the k results and returns the one that gave back true.
 async def evaluate_returned_k_results(problem : str, returned_k_results) : 
     evaluated_results = []
+    evaluation_tasks = []
     print("Evaluating post leads...")
-    evaluation_tasks = v1_evaluator_post.v1_evaluator_post(problem, returned_k_results=returned_k_results)
+    for k_result in returned_k_results : 
+        evaluation_tasks.append(post_evaluation(problem, k_result['metadata']['content']))
     evaluation_returned = await asyncio.gather(*evaluation_tasks)
 
     for k_result, result in zip(returned_k_results, evaluation_returned)  : 
         if result == True :
             evaluated_results.append(k_result)
     
-    return evaluated_results, returned_k_results
+    return evaluated_results
 
 
 # Returns the 
@@ -113,11 +114,9 @@ async def v2_post_search(product_description, index) :
             if 'values' in lead:
                     del lead['values']
         return final_leads
-    evaluated_output_leads = delete_embedding_values(final_leads[0])
-    print("This is the number of evaluated leads : ", len(evaluated_output_leads))
-    non_evaluated_output_leads = delete_embedding_values(final_leads[1])
-    final_object = {'non_evaluated_leads' : non_evaluated_output_leads, 'evaluated_leads' : evaluated_output_leads }
-    return final_object
+    output_leads = delete_embedding_values(final_leads)
+
+    return output_leads
 
 
 
@@ -144,6 +143,7 @@ async def v2_post_search(product_description, index) :
 # print(len(test_dictionary)) 
 # vector_database = e.embed_and_upsert_to_pinecone(test_dictionary)
 # print(vector_database)
+
 # id_set = ['t3_1aq38xe']
 # test = e.query_fetch_id_information(id_set, 'test-index')
 # print(test)
