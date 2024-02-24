@@ -40,7 +40,7 @@ async def stage_4_scrape_posts(subreddit_urls) :
     for url in subreddit_urls: 
         new_json = copy.deepcopy(subreddit_search_json)
         new_json['startUrls'].append({'url' : url})
-        tasks.append(apify_reddit_agent_async(json_input=new_json, wait_time=60))
+        tasks.append(apify_reddit_agent_async(json_input=new_json, wait_time=240))
     print(new_json)
     scraped_posts_array = await asyncio.gather(*tasks)
     flattened_array = [item for array in scraped_posts_array for item in array]

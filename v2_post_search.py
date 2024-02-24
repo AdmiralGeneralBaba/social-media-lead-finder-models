@@ -13,7 +13,7 @@ def vd_search_queries(problem) :
     prompt = """ Given to you will be a problem that a company solves. Your job is to give different ways of saying this problem, such that the semantic meaning is the same but it explores different search spaces in the context of retrieving the maximum amount of relevant results from a search.
 Your search queries should go broader and more creative in their solution space, such that the final value you give in the array should be a search term that goes just on the edge of being an irrelevant search.
 Think deeply about what the problem might link to, and then perform that search. For example, if the solution is about having fisherman catch more fish with a better hook, the last search term should be a broad problem about catching more fish in general.
-The first 3 should be direct, the middle 3 should be roughly direct and the last 4 should be indirect.
+The first 10 should be direct, the middle 10 should be roughly direct and the last 10 should be indirect.
 
 In your output, you should ONLY give an array of text values. For example : 
 [{search1here} {serach2here} etc]

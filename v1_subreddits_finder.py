@@ -9,7 +9,7 @@ subreddit_search_json = {
     "debugMode": False,
     "includeNSFW": True,
     "maxComments": 0,
-    "maxCommunitiesCount": 2,
+    "maxCommunitiesCount": 4,
     "maxItems": 4,
     "maxPostCount": 0,
     "maxUserCount": 0,

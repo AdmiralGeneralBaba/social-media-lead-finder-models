@@ -24,7 +24,7 @@ Here is the problem the company is solving : + """ + f"{problem}" + """w
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. Also, but VERY LENIANT with your judgement; this lead is very warm, so if there is a slight chance that this would be a potential lead, accept it (unless it is spam/an advertisement, etc). This lead has posted this within the last 5 days. """
+Lets think step by step to get to the right answer. """
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
@@ -46,9 +46,9 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. In your judgement, be leniant. This lead is warm, and has posted this within the last 30 days """
+Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -68,9 +68,9 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. This lead has posted in the last 30 - 180 days, so be relatively leniant in your judgement."""
+Lets think step by step to get to the right answer."""
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -90,9 +90,9 @@ Here is the problem the company is solving : + """ + f"{problem}" + """
 
 and here is the reddit post : 
 
-Lets think step by step to get to the right answer. This lead posted this at least 180 days ago, so unless they are very relevent, dont include them."""
+Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
