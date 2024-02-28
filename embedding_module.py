@@ -143,10 +143,14 @@ def query_fetch_id_information(id_set, index) :
         id_information.append(index_result)
     return id_information
 
-# embed_and_upsert_to_pinecone(test_dictionary)
-# input_vectors = get_embedding("""My Jet rental business is made up of 2 bombardier challenger 601-3A which we rent at £5000 per hour and 4 hawker 900xp rented at £6400 or the country's currency equivalent like I think it's over 7k euros in Spai.  my customers are people who wish to travel in style and comfort and without the hassles of regular commercial air travel 
-# Usually top business execs and popular celebrities""")
-# print(query_pinecone_vector_database("test-index", input_vectors, 15))
+
+
+test_info = """ A question for EV owners about going on holiday
+I look after holiday homes in Wales, and we're getting increasing numbers of people expecting to be able to run a cable out of the house to charge their car. A couple of the houses do have charge points which you pay to use, but even at these houses on a couple of occasions we've found guests charging from a cable out the kitchen window.
+
+If you went on holiday to a rented cottage would you expect to be allowed to charge your car for free?"""
+input_vectors = get_embedding(test_info)
+print(query_pinecone_vector_database("test-index", input_vectors, 15))
 
 
 # test_index = "test-index"

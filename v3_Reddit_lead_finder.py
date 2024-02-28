@@ -31,7 +31,10 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
     final_leads = await v2_post_search(product_description, user_id_index_name)
     return final_leads
 
-
+async def add_subreddit_to_database(url_array, user_id_index_name : str) : 
+    scraped_posts = await stage_4_scrape_posts(url_array)
+    print("Scraped posts, added them to pinecone...")
+    await async_embed_and_upsert_to_pinecone(scraped_posts, user_id_index_name)
 
 
 
@@ -40,14 +43,14 @@ async def v3_reddit_lead_finder(product_description, user_id_index_name) :
 
 
 
-# test_product_description = """ 'Our company automates VFX rotoscoping jobs and completes it to a professional standard. we are essentilly a rotoscoping contractor' """
-# test_user_id = "test-index"
-# test_output = asyncio.run(v3_reddit_lead_finder(test_product_description, test_user_id))
-# print(test_output[0])
-# for i in range(len(test_output)) : 
-#     print(test_output[i]['metadata']['content']
-#           )
-#     print(test_output[i]['values'])
+url_array = ['https://www.reddit.com/r/HousingUK/new/']
+test_user_id = "test-index"
+test_output = asyncio.run(add_subreddit_to_database(url_array=url_array, user_id_index_name=test_user_id))
+print(test_output[0])
+for i in range(len(test_output)) : 
+    print(test_output[i]['metadata']['content']
+          )
+    print(test_output[i]['values'])
 
 
 # print(len(test_output))

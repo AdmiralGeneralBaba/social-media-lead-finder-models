@@ -22,9 +22,10 @@ When you have made up your mind, type either 'YES' or 'NO' at the end.
 
 Here is the problem the company is solving : + """ + f"{problem}" + """w
 
-and here is the reddit post : 
+and here is the reddit post :
 
-Lets think step by step to get to the right answer. """
+Be harsh in your judgement, this person MUST relate completely to the problem at hand or you will be fired.
+Lets think step by step to get the right answer."""
     temp = 0.9
     result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
@@ -42,13 +43,14 @@ Your job is evaluate this post, and make a decision on whether or not it is a po
 
 When you have made up your mind, type either 'YES' or 'NO' at the end. 
 
-Here is the problem the company is solving : + """ + f"{problem}" + """
+Here is the problem the company is solving : + """ + f"{problem}" + """w
 
-and here is the reddit post : 
+and here is the reddit post :
 
+Make sure your judgement is correct. IF YOU DONT YOU WILL BE FIRED AND THE COMPANY WILL FAIL
 Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -64,13 +66,14 @@ Your job is evaluate this post, and make a decision on whether or not it is a po
 
 When you have made up your mind, type either 'YES' or 'NO' at the end. 
 
-Here is the problem the company is solving : + """ + f"{problem}" + """
+Here is the problem the company is solving : + """ + f"{problem}" + """w
 
-and here is the reddit post : 
+and here is the reddit post :
 
-Lets think step by step to get to the right answer."""
+Make sure your judgement is correct. IF YOU DONT YOU WILL BE FIRED AND THE COMPANY WILL FAIL
+Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -86,13 +89,14 @@ Your job is evaluate this post, and make a decision on whether or not it is a po
 
 When you have made up your mind, type either 'YES' or 'NO' at the end. 
 
-Here is the problem the company is solving : + """ + f"{problem}" + """
+Here is the problem the company is solving : + """ + f"{problem}" + """w
 
-and here is the reddit post : 
+and here is the reddit post :
 
+Make sure your judgement is correct. IF YOU DONT YOU WILL BE FIRED AND THE COMPANY WILL FAIL
 Lets think step by step to get to the right answer. """
     temp = 0.9
-    result = await llm.async_open_ai_gpt4_turbo_call(content, prompt, temp)
+    result = await llm.async_open_ai_gpt4_call(content, prompt, temp)
     yes_finder = r"(YES)"
     find_results = re.findall(yes_finder, result)
     if find_results :
@@ -141,4 +145,10 @@ def v1_evaluator_post(problem : str, returned_k_results) :
         evaluation_tasks.append(category_3_post_evaluation(problem, k_result['metadata']['content']))
     for k_result in organised_k_results['category_4'] : 
         evaluation_tasks.append(category_4_post_evaluation(problem, k_result['metadata']['content']))
+    return evaluation_tasks
+
+def v2_evaluator_post(problem : str, returned_k_results) : 
+    evaluation_tasks = []
+    for k_result in returned_k_results : 
+        evaluation_tasks.append(category_1_post_evaluation(problem, k_result['metadata']['content']))
     return evaluation_tasks
